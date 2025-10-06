@@ -1,6 +1,6 @@
 Frontend - Astro z React dla komponentó interaktywnych:
 - Astro 5 pozwala na tworzenie szybkich, wydajnych stron i aplikacji z minimalną ilością Javascript
-- React 19 zapewnie interaktywność tam, gdzie jest potrzebna
+- React 19 zapewnia interaktywność tam, gdzie jest potrzebna
 - Typescript 5 dla statycznego typowania kodu i lepszego wsparcia IDE
 - TailWind 4 pozwala na wygodne stylowanie aplikacji
 - Shadcn/ui zapewnia bibliotekę dostępnych komponentów React, na których oprzemy UI
