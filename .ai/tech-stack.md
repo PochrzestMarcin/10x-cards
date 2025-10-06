@@ -13,7 +13,7 @@ Backend - Supabase jako kompleksowe rozwiązanie backendowe:
 
 AI - komunikacja z modelami przez usługę Openrouter.ai:
 - Dostęp do szerokiej gamy modeli (OpenAI, Anthropic, Google i inne), które pozwolą nam znaleźć rozwiązanie zapewniające wysoką efektywność i niskie koszta
-- Pozwala na ustawianie limitó finansowych na klucze API
+- Pozwala na ustawianie limitów finansowych na klucze API
 
 CI/CD i Hosting:
 - GitHub Actions do tworzenia pipeline'ów CI/CD
