@@ -29,7 +29,7 @@ Status  | Content
  ```json
  {
     "generation_id": 123,
-    "draftFlashcards": [
+    "draft_flashcards": [
         { "front": "Generated question", "back": "Generated Answer", "source": "ai-full" }
     ],
     "generated_count": 5
@@ -49,7 +49,7 @@ Status  | Content
       - Pass `source_text` to external AI service in order to generate flashcard drafts.
       - Measure duration.
       - Calculates and stores metadata of generation in `generations` table (`model`, `generated_count`, `source_text_hash`, `source_text_length`, `generation_duration_ms`)
-   2. Return `{ generationId, draftFlashcards, generated_count }`.
+   2. Return `{ generationId, draft_flashcards, generated_count }`.
 3. On AI service failure, service logs row into `generation_error_logs` and returns 500.
 4. API route returns 201 JSON.
 

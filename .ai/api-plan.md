@@ -118,7 +118,7 @@
     ```json
     {
       "generationId": 15,
-      "draftFlashcards": [
+      "draft_flashcards": [
         { "front": "Generated Question", "back": "Generated Answer", "source": "ai-full" }
       ],
       "generated_count": 5
