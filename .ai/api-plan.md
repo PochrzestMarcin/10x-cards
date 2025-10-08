@@ -101,99 +101,87 @@
   - **Errors**: 404 if flashcard not found, 401 unauthorized
 
 ### 2.2 Generations
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | `/api/generations` | Submit source text to LLM; returns draft flashcards |
-| GET | `/api/generations` | List past generations |
-| GET | `/api/generations/{id}` | Generation details incl. accepted stats |
-| PUT | `/api/generations/{id}/accept` | Accept/modify generated cards & persist |
 
-POST `/api/generations` body:
-```json
-{
-  "model": "openrouter/mistral-7b",
-  "text": "<source text between 1000-10000 chars>"
-}
-```
-Response `202 Accepted`:
-```json
-{
-  "generationId": 15,
-  "draftFlashcards": [ { "front": "…", "back": "…" } ],
-  "status": "processing" // polling via /{id}
-}
-```
-PUT `/accept` body:
-```json
-{
-  "flashcards": [
-     { "front": "…", "back": "…", "action": "accept" },
-     { "front": "…", "back": "…", "action": "edit" },
-     { "index": 3, "action": "reject" }
-  ]
-}
-```
+- **POST `/generations`**
+  - **Description**: Initiate the AI generation process for flashcards drafts generation based on user-provided text.
+  - **Request JSON**:
+    ```json
+    {
+      "source_text": "<User provided source text between 1000-10000 chars>"
+    }
+    ```
+  - **Business Logic**:
+    - Validate that `source_text` length is between 1000 and 10000 characters.
+    - Call the AI service to generate flashcards drafts.
+    - Store the generation metadata and return generated flashcards drafts to the user.
+  - **JSON Response**:
+    ```json
+    {
+      "generationId": 15,
+      "draftFlashcards": [
+        { "front": "Generated Question", "back": "Generated Answer", "source": "ai-full" }
+      ],
+      "generated_count": 5
+    }
+    ```
+  - **Validations**:
+    - `source_text` length must be between 1000-10000 characters
+  - **Errors**:
+    - 400 Bad Request for invalid inputs.
+    - 401 Unauthorized if token is invalid.
+    - 500 AI service errors (logs recorded in `generation_error_logs`).
 
-### 2.4 Generation Error Logs (admin only)
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/admin/generation-error-logs` | List error logs with filters |
+- **GET `/generations`**
+  - **Description**: Retrieve list of past generation requests for the authenticated user (supports pagination)
+  - **Query Parameters**:
+    - `page` (default: 1)
+    - `limit` (default: 10)
+  - **JSON Response** List of generation objects with metadata
+  - **Errors**: 401 Unauthorized if token is invalid
 
-### 2.5 Study Session *(MVP placeholder – external algorithm)*
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/study-session/next` | Get next due flashcard |
-| POST | `/api/study-session/{flashcardId}/review` | Submit recall quality (1-5) |
+- **GET `/generations/{id}`**
+  - **Description**: Get detailed information about a specific generation including its flashcards
+  - **JSON Response**: Generation details and associated flashcards
+  - **Errors**:
+    - 401 Unauthorized if token is invalid
+    - 404 Not Found if generation not found
+
+
+### 2.3 Generation Error Logs (admin only)
+
+- **GET `/generation-error-logs`**
+  - **Description**: Retrieve error logs from generation attempts (admin only)
+  - **JSON Response**: List of error log objects
+  - **Errors**:
+    - 401 Unauthorized if token is invalid
+    - 403 Forbidden if user is not admin
 
 ## 3. Authentication & Authorization
+- Users authenticate via `/auth/login` or `/auth/register`, receiving bearer token.
 - Supabase Auth issues JWT (RS256). Clients include `Authorization: Bearer <token>`.
+- Protected endpoints require the token in the `Authorization` header.
 - Each request validates token, extracts `user.id`. Row-level security (RLS) in PostgreSQL additionally enforces `user_id = auth.uid()`.
-- Endpoints under `/api/admin/*` require `role=admin` claim.
-- Rate limiting: 120 req/minute per user via Astro middleware.
+- **Additional Information**: Use https, rate limiting, and secure error messaging to mitigate security risks.
 
 ## 4. Validation & Business Logic
-### 4.1 Flashcard Validation
-| Field | Rule |
-|-------|------|
-| front | required, ≤200 chars |
-| back | required, ≤500 chars |
-| source | enum { ai-full, ai-edited, manual } |
+### 4.1 **Flashcards** Validation
+
+ - `front`: required, ≤200 chars
+ - `back`: required, ≤500 chars
+ - `source`: enum { ai-full, ai-edited, manual }
 
 Additional: user can update/delete only own flashcards.
 
-### 4.2 Generation Validation
-| Field | Rule |
-|-------|------|
-| text length | 1000-10000 characters |
-| model | required, known whitelist |
+### 4.2 **Generation** Validation
 
-Business Logic:
-1. POST /generations queues async LLM call; statistics (`generated_count`, duration) saved.
-2. PUT /generations/{id}/accept updates success metrics (`accepted_unedited_count`, `accepted_edited_count`) and creates flashcards in bulk within transaction.
-3. Study-session endpoints call external spaced-repetition library; scheduling data stored client-side for MVP or in future `reviews` table.
+ - `source_text`: 1000-10000 characters
+ - `source_text_hash`: 1000-10000 characters
 
-Error Handling:
-- Validation errors → `400` with details array.
-- Async LLM failures logged into `generation_error_logs`; surfaces `500` to user with correlation id.
+**Business Logic Implementation**:
 
-Security Measures:
-- HTTPS only, HSTS.
-- Content-Type: application/json; size limit 1 MB.
-- SQL injection prevented via Supabase SDK.
-- CORS allow-list origins.
-
-Pagination Format:
-```json
-{
-  "items": [/* … */],
-  "page": 1,
-  "perPage": 20,
-  "total": 135
-}
-```
-
----
-*Assumptions:*
-- Study-session uses separate library; minimal endpoints included.
-- Registration/login handled through Supabase but exposed for convenience.
-- Admin endpoints restricted via JWT `role` claim.
+- **AI Generation**:
+ - Validate inputs and call the AI service upon POST `/generations`
+ - Record generation metadata (model, generated_count, duration) and persist generated flashcards
+ - Log any errors in `generation_error_logs` for auditing and debugging.
+- **Flashcard management**:
+ - Automatic update of the `updated_at` field via database triggers when flashcards are modified.
