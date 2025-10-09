@@ -56,7 +56,7 @@ export class GenerationService {
 
   private async logGenerationError(error: unknown, sourceText: string, userId: string): Promise<void> {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    const sourceTextHash = createHash('sha256')
+    const sourceTextHash = createHash('md5')
       .update(sourceText)
       .digest('hex');
 
