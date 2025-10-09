@@ -98,3 +98,8 @@ export type GenerationErrorLogDto = Pick<
 GenerationErrorLog,
 "id" | "error_code" | "error_message" | "created_at" | "model" | "source_text_hash" | "source_text_length"
 >;
+
+/** Response type for POST /flashcards endpoint */
+export interface CreateFlashcardsResponseDto {
+  flashcards: FlashcardDTO[];
+}
