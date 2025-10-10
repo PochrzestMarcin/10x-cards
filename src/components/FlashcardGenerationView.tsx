@@ -96,18 +96,20 @@ export function FlashcardGenerationView() {
       ) : (
         flashcardProposals.length > 0 && (
           <div className="space-y-4">
+            <div className="flex justify-end">
+              <BulkSaveButton
+                flashcards={flashcardProposals}
+                generationId={generationId}
+                onSaveAll={handleSaveAll}
+                onSaveAccepted={handleSaveAccepted}
+                disabled={isLoading}
+              />
+            </div>
             <FlashcardList
               flashcards={flashcardProposals}
               onAccept={handleAccept}
               onEdit={handleEdit}
               onReject={handleReject}
-            />
-            <BulkSaveButton
-              flashcards={flashcardProposals}
-              generationId={generationId}
-              onSaveAll={handleSaveAll}
-              onSaveAccepted={handleSaveAccepted}
-              disabled={isLoading}
             />
           </div>
         )

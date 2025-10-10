@@ -29,7 +29,7 @@ export function TextInputArea({ value, onChange, placeholder }: TextInputAreaPro
             value={value}
             onChange={(e: ChangeEvent<HTMLTextAreaElement>) => onChange(e.target.value)}
             placeholder={placeholder}
-            className="min-h-[200px] resize-y"
+            className="min-h-[200px] max-h-[400px] resize-y"
           />
           <div className="flex justify-between items-center text-sm">
             <span className={error ? 'text-red-500' : 'text-muted-foreground'}>

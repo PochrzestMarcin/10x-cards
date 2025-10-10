@@ -56,7 +56,7 @@ export function FlashcardListItem({
   return (
     <Card className={`overflow-hidden ${cardStyle}`}>
       <CardContent className="p-6">
-        <div className="space-y-4">
+        <div className="space-y-4 h-full">
           {isEditing ? (
             <>
               <div className="space-y-2">
@@ -66,9 +66,16 @@ export function FlashcardListItem({
                   placeholder="Front side"
                   className="resize-none"
                 />
-                {frontError && (
-                  <p className="text-sm text-red-500">{frontError}</p>
-                )}
+                <div className="flex justify-between items-center text-xs">
+                  {frontError ? (
+                    <p className="text-red-500">{frontError}</p>
+                  ) : (
+                    <span className="text-muted-foreground">Front side</span>
+                  )}
+                  <span className={`${editedFront.length > 200 ? 'text-red-500' : 'text-muted-foreground'}`}>
+                    {editedFront.length}/200
+                  </span>
+                </div>
               </div>
               <div className="space-y-2">
                 <Textarea
@@ -77,9 +84,16 @@ export function FlashcardListItem({
                   placeholder="Back side"
                   className="resize-none"
                 />
-                {backError && (
-                  <p className="text-sm text-red-500">{backError}</p>
-                )}
+                <div className="flex justify-between items-center text-xs">
+                  {backError ? (
+                    <p className="text-red-500">{backError}</p>
+                  ) : (
+                    <span className="text-muted-foreground">Back side</span>
+                  )}
+                  <span className={`${editedBack.length > 500 ? 'text-red-500' : 'text-muted-foreground'}`}>
+                    {editedBack.length}/500
+                  </span>
+                </div>
               </div>
             </>
           ) : (
