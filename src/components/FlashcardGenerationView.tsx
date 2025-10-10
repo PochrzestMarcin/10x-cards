@@ -1,9 +1,9 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import type { FlashcardProposalDto } from '../types';
 import { TextInputArea } from './TextInputArea.tsx';
 import { GenerateButton } from './GenerateButton.tsx';
 import { SkeletonLoader } from './SkeletonLoader.tsx';
-import { ErrorNotification } from './ErrorNotification.tsx';
 import { FlashcardList } from './FlashcardList.tsx';
 import { BulkSaveButton } from './BulkSaveButton.tsx';
 import { useGenerateFlashcards } from './hooks/useGenerateFlashcards';
@@ -21,7 +21,6 @@ export function FlashcardGenerationView() {
     setFlashcardProposals,
     generationId,
     isLoading,
-    errorMessage,
     generateFlashcards,
     saveFlashcards,
   } = useGenerateFlashcards();
@@ -60,12 +59,20 @@ export function FlashcardGenerationView() {
   };
 
   const handleSaveAll = () => {
-    saveFlashcards(flashcardProposals);
+    toast.promise(saveFlashcards(flashcardProposals), {
+      loading: 'Saving all flashcards...',
+      success: `Successfully saved ${flashcardProposals.length} flashcards`,
+      error: 'Failed to save flashcards'
+    });
   };
 
   const handleSaveAccepted = () => {
     const acceptedFlashcards = flashcardProposals.filter(card => card.accepted);
-    saveFlashcards(acceptedFlashcards);
+    toast.promise(saveFlashcards(acceptedFlashcards), {
+      loading: 'Saving accepted flashcards...',
+      success: `Successfully saved ${acceptedFlashcards.length} flashcards`,
+      error: 'Failed to save flashcards'
+    });
   };
 
   const isValidText = textValue.length >= 1000 && textValue.length <= 10000;
@@ -83,10 +90,6 @@ export function FlashcardGenerationView() {
         disabled={!isValidText}
         isLoading={isLoading}
       />
-
-      {errorMessage && (
-        <ErrorNotification message={errorMessage} />
-      )}
 
       {isLoading ? (
         <SkeletonLoader />

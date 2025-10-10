@@ -1,4 +1,5 @@
 import { useState, type Dispatch, type SetStateAction } from 'react';
+import { toast } from 'sonner';
 import type {
   GenerateFlashcardsCommand,
   GenerationCreateResponseDto,
@@ -13,7 +14,6 @@ interface UseGenerateFlashcardsResult {
   setFlashcardProposals: Dispatch<SetStateAction<FlashcardProposalViewModel[]>>;
   generationId: number | null;
   isLoading: boolean;
-  errorMessage: string | null;
   generateFlashcards: (text: string) => Promise<void>;
   saveFlashcards: (flashcardsToSave: FlashcardProposalViewModel[]) => Promise<void>;
 }
@@ -22,12 +22,11 @@ export function useGenerateFlashcards(): UseGenerateFlashcardsResult {
   const [flashcardProposals, setFlashcardProposals] = useState<FlashcardProposalViewModel[]>([]);
   const [generationId, setGenerationId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const generateFlashcards = async (text: string) => {
     try {
       setIsLoading(true);
-      setErrorMessage(null);
+      toast.dismiss();
 
       const command: GenerateFlashcardsCommand = {
         source_text: text
@@ -55,8 +54,12 @@ export function useGenerateFlashcards(): UseGenerateFlashcardsResult {
           edited: false,
         }))
       );
+      toast.success(`Successfully generated ${data.generated_count} flashcards`, {
+        description: 'Review and edit the flashcards before saving them.',
+        duration: 5000
+      });
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'An unexpected error occurred');
+      toast.error(error instanceof Error ? error.message : 'An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }
@@ -64,13 +67,13 @@ export function useGenerateFlashcards(): UseGenerateFlashcardsResult {
 
   const saveFlashcards = async (flashcardsToSave: FlashcardProposalViewModel[]) => {
     if (!generationId) {
-      setErrorMessage('No generation ID available');
+      toast.error('No generation ID available');
       return;
     }
 
     try {
       setIsLoading(true);
-      setErrorMessage(null);
+      toast.dismiss();
 
       const flashcardsToCreate: FlashcardCreateDto[] = flashcardsToSave.map(card => ({
         front: card.front,
@@ -100,8 +103,12 @@ export function useGenerateFlashcards(): UseGenerateFlashcardsResult {
       // Clear the proposals after successful save
       setFlashcardProposals([]);
       setGenerationId(null);
+      toast.success(`Successfully saved ${data.flashcards.length} flashcards`, {
+        description: 'Your flashcards have been saved to your collection.',
+        duration: 5000
+      });
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'An unexpected error occurred');
+      toast.error(error instanceof Error ? error.message : 'An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }
@@ -112,7 +119,6 @@ export function useGenerateFlashcards(): UseGenerateFlashcardsResult {
     setFlashcardProposals,
     generationId,
     isLoading,
-    errorMessage,
     generateFlashcards,
     saveFlashcards,
   };
