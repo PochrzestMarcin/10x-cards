@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { Toaster } from "@/components/ui/sonner";
+import { Header } from "@/components/Header";
 
 interface Props {
   title?: string;
@@ -10,7 +11,7 @@ const { title = "10x Astro Starter" } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -19,7 +20,12 @@ const { title = "10x Astro Starter" } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
-    <slot />
+    <div class="min-h-screen bg-background font-sans antialiased">
+      <Header client:load />
+      <main class="container py-6">
+        <slot />
+      </main>
+    </div>
     <Toaster richColors closeButton client:only="react" />
   </body>
 </html>
