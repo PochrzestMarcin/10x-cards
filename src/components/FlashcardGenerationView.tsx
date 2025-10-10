@@ -78,7 +78,7 @@ export function FlashcardGenerationView() {
   const isValidText = textValue.length >= 1000 && textValue.length <= 10000;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-2">
       <TextInputArea
         value={textValue}
         onChange={handleTextChange}
