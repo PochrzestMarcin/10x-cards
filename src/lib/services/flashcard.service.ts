@@ -1,7 +1,6 @@
-import type { SupabaseClient } from 'src/db/supabase.client.ts';
+import type { SupabaseClient } from '../../db/supabase.client.ts';
 import type { CreateFlashcardCommand, FlashcardDTO, FlashcardInsert } from '../../types';
 import { flashcardsCreateSchema } from '../schemas/flashcard.schema';
-import type { Database } from '../../db/database.types';
 
 export class FlashcardService {
   /**
@@ -11,7 +10,7 @@ export class FlashcardService {
   static async createFlashcards(
     command: CreateFlashcardCommand,
     userId: string,
-    supabase: SupabaseClient<Database>
+    supabase: SupabaseClient
   ): Promise<FlashcardDTO[]> {
     // Validate command structure and business rules
     const validatedData = flashcardsCreateSchema.parse(command);
