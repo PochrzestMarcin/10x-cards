@@ -1,4 +1,4 @@
-import type { SupabaseClient } from '../../db/supabase.client';
+import type { SupabaseClient } from '../../db/supabase.client.ts';
 import type { CreateFlashcardCommand, FlashcardDTO, FlashcardInsert } from '../../types';
 import { flashcardsCreateSchema } from '../schemas/flashcard.schema';
 
