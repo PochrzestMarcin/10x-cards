@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import type { ModelParameters, RequestPayload, ApiResponse } from './openrouter.types';
 import { OpenRouterError } from './openrouter.types';
-import { apiResponseSchema, modelParametersSchema, configSchema, jsonSchemaConfigSchema } from './openrouter.schema';
+import { apiResponseSchema, modelParametersSchema, configSchema } from './openrouter.schema';
 import { OpenRouterLogger } from './openrouter.logger';
 
 export class OpenRouterService {
@@ -11,11 +11,8 @@ export class OpenRouterService {
   private currentUserMessage: string;
   private currentModelName: string;
   private currentModelParameters: ModelParameters;
-  private currentResponseFormat?: {
-    name: string;
-    strict: boolean;
-    schema: Record<string, unknown>;
-  };
+  private currentResponseFormat?: Record<string, unknown>;
+    
   private readonly maxRetries: number;
   private readonly timeout: number;
 
@@ -93,10 +90,16 @@ export class OpenRouterService {
    * Sets the response format schema for structured responses
    * @param schema The JSON schema to use for response formatting
    */
-  public setResponseFormat(name: string, schema: Record<string, unknown>, strict: boolean = true): void {
-    const config = { name, schema, strict };
-    const validatedConfig = jsonSchemaConfigSchema.parse(config);
-    this.currentResponseFormat = validatedConfig;
+  public setResponseFormat(schema: Record<string, unknown>): void {
+    try {
+      JSON.stringify(schema);
+      this.currentResponseFormat = schema;
+    } catch (error) {
+      throw new OpenRouterError(
+        'Invalid response format schema',
+        'INVALID_RESPONSE_FORMAT_SCHEMA'
+      );
+    }
   }
 
   /**
@@ -147,7 +150,7 @@ export class OpenRouterService {
 
     if (this.currentResponseFormat) {
       payload.response_format = {
-        type: 'json_schema',
+        type: "json_schema",
         json_schema: this.currentResponseFormat
       };
     }

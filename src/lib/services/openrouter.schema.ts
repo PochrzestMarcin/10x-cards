@@ -1,11 +1,5 @@
 import { z } from 'zod';
 
-export const jsonSchemaConfigSchema = z.object({
-  name: z.string(),
-  strict: z.boolean().default(true),
-  schema: z.record(z.unknown())
-});
-
 export const configSchema = z.object({
   apiUrl: z.string().url().optional().default('https://openrouter.ai/api/v1'),
   systemMessage: z.string().optional().default(''),
