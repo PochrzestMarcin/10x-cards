@@ -2,16 +2,21 @@ import type { APIRoute } from 'astro';
 import { FlashcardService } from '../../lib/services/flashcard.service';
 import type { CreateFlashcardsResponseDto } from '../../types';
 import { ZodError } from 'zod';
-import { DEFAULT_USER_ID } from '../../db/supabase.client';
-
 export const prerender = false;
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
     // Ensure we have auth context from middleware
-    const supabase = locals.supabase;
-    // Use default test user ID for now - auth will be implemented later
-    const userId = DEFAULT_USER_ID;
+    const { supabase, user } = locals;
+    
+    if (!user) {
+      return new Response(JSON.stringify({ message: 'Unauthorized' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    
+    const userId = user.id;
 
     // Parse request body
     let body;
