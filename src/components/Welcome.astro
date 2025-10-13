@@ -1,5 +1,11 @@
 ---
 import { Button } from "@/components/ui/button";
+
+interface Props {
+  isAuthenticated?: boolean;
+}
+
+const { isAuthenticated = false } = Astro.props;
 ---
 
 <div
@@ -45,24 +51,39 @@ import { Button } from "@/components/ui/button";
 
         <div class="text-center space-y-6">
           <p class="text-xl text-muted-foreground">
-            Join the community learning more effectively with AI
+            {isAuthenticated 
+              ? "Ready to create more flashcards? Let's get started!"
+              : "Join the community learning more effectively with AI"
+            }
           </p>
           <div class="flex justify-center gap-4">
-            <a href="/auth/register">
-              <Button
-                class="px-8 py-6 text-lg rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
-              >
-                Sign up
-              </Button>
-            </a>
-            <a href="/auth/login">
-              <Button
-                variant="outline"
-                class="px-8 py-6 text-lg rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
-              >
-                Sign in
-              </Button>
-            </a>
+            {isAuthenticated ? (
+              <a href="/generate">
+                <Button
+                  class="px-8 py-6 text-lg rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
+                >
+                  Start Generating
+                </Button>
+              </a>
+            ) : (
+              <>
+                <a href="/auth/register">
+                  <Button
+                    class="px-8 py-6 text-lg rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
+                  >
+                    Sign up
+                  </Button>
+                </a>
+                <a href="/auth/login">
+                  <Button
+                    variant="outline"
+                    class="px-8 py-6 text-lg rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
+                  >
+                    Sign in
+                  </Button>
+                </a>
+              </>
+            )}
           </div>
         </div>
       </div>

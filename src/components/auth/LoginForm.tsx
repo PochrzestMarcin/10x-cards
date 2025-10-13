@@ -8,11 +8,14 @@ import { Card } from '../ui/card';
 import { Input } from '../ui/input';
 import { Checkbox } from '../ui/checkbox';
 import { loginSchema } from '../../lib/schemas/auth.schema';
+import { useAuthStore } from '../../lib/stores/auth.store';
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const setUser = useAuthStore((state) => state.setUser);
+  
   const {
     register,
     handleSubmit,
@@ -27,10 +30,31 @@ export function LoginForm() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    setIsLoading(true);
-    // Note: Auth logic will be implemented in next steps
-    toast.error('Authentication not implemented yet');
-    setIsLoading(false);
+    try {
+      setIsLoading(true);
+      
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to sign in');
+      }
+
+      setUser(result.user);
+      toast.success('Successfully signed in');
+      window.location.href = '/generate';
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to sign in');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

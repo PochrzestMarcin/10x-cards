@@ -1,10 +1,21 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { LoginForm } from '../../components/auth/LoginForm';
+import { createSupabaseServerInstance } from '../../db/supabase.client';
 
 export const prerender = false;
 
-// Note: Server-side auth validation will be added in next steps
+const supabase = createSupabaseServerInstance({
+  cookies: Astro.cookies,
+  headers: Astro.request.headers,
+});
+
+const { data: { user } } = await supabase.auth.getUser();
+
+// If user is already authenticated, redirect to generate page
+if (user) {
+  return Astro.redirect('/generate');
+}
 ---
 
 <Layout title="Login - 10x Cards">
