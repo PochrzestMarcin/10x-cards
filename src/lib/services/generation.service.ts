@@ -5,7 +5,7 @@ import { OpenRouterService } from './openrouter.service';
 
 export class GenerationService {
   private readonly openRouter: OpenRouterService;
-  private readonly defaultModel = 'google/gemma-3n-e2b-it:free';
+  private readonly defaultModel = 'openai/gpt-4o-mini';
 
   constructor(
     private readonly supabase: SupabaseClient,
@@ -15,6 +15,8 @@ export class GenerationService {
       throw new Error('OpenRouter API key is required');
     }
 
+    console.log('defaultModel', this.defaultModel);
+    console.log('apiKey', openRouterApiKey);
     this.openRouter = new OpenRouterService(openRouterApiKey, {
       modelName: this.defaultModel,
       systemMessage: this.getSystemPrompt(),
@@ -29,15 +31,24 @@ export class GenerationService {
     });
 
     this.openRouter.setResponseFormat({
-      type: "array",
-      items: {
+      name: "flashcards",
+      schema: {
         type: "object",
         properties: {
-          front: { type: "string"},
-          back: { type: "string"},
+          flashcards: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                front: { type: "string"},
+                back: { type: "string"},
+              },
+              required: ["front", "back"]
+            }
+          }
         },
-        required: ["front", "back"]
       },
+      required: ["flashcards"]
     });
   }
 
@@ -63,7 +74,7 @@ Example:
     }
   ]
 }`;
-  }
+}
 
   async generateFlashcards(
     sourceText: string,
@@ -78,6 +89,8 @@ Example:
         .digest('hex');
 
       // Generate flashcards using OpenRouter
+      
+      console.log('message', sourceText);
       const response = await this.openRouter.sendChatMessage(sourceText);
       
       if (!response.choices?.[0]?.message?.content) {

@@ -166,14 +166,12 @@ export class OpenRouterService {
   private async executeRequest(requestPayload: RequestPayload): Promise<ApiResponse> {
     let lastError: Error | null = null;
     
-    for (let attempt = 0; attempt < this.maxRetries; attempt++) {
-      OpenRouterLogger.log('debug', `Executing request attempt ${attempt + 1}/${this.maxRetries}`, {
-        url: this.apiUrl,
-        model: requestPayload.model,
-        hasSystemMessage: !!requestPayload.messages.find(m => m.role === 'system')
-      });
-      
+    for (let attempt = 0; attempt < this.maxRetries; attempt++) {  
       try {
+        console.log(`attempt ${attempt}:`, requestPayload);
+        console.log(`apiUrl: ${this.apiUrl}`);
+        console.log(`apiKey: ${this.apiKey}`);
+        
         const response = await fetch(`${this.apiUrl}/chat/completions`, {
           method: 'POST',
           headers: {
@@ -183,13 +181,9 @@ export class OpenRouterService {
           body: JSON.stringify(requestPayload),
           signal: AbortSignal.timeout(this.timeout)
         });
-
+        console.log(`response ${attempt}:`, response);
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          OpenRouterLogger.log('error', 'API request failed', {
-            status: response.status,
-            errorData
-          });
           throw new OpenRouterError(
             errorData.message || `HTTP error ${response.status}`,
             'API_ERROR',
