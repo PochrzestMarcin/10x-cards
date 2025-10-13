@@ -5,9 +5,10 @@ import { Header } from "@/components/Header";
 
 interface Props {
   title?: string;
+  isAuthenticated?: boolean;
 }
 
-const { title = "10x Cards" } = Astro.props;
+const { title = "10x Cards", isAuthenticated = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -22,7 +23,7 @@ const { title = "10x Cards" } = Astro.props;
   <body>
     <div class="min-h-screen bg-background font-sans antialiased">
       <div class="px-8">
-        <Header client:load />
+        <Header client:load isAuthenticated={isAuthenticated} />
         <main class="container py-6">
           <slot />
         </main>
