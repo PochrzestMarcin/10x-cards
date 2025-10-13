@@ -2,7 +2,6 @@ import { z } from 'zod';
 import type { ModelParameters, RequestPayload, ApiResponse } from './openrouter.types';
 import { OpenRouterError } from './openrouter.types';
 import { apiResponseSchema, modelParametersSchema, configSchema } from './openrouter.schema';
-import { OpenRouterLogger } from './openrouter.logger';
 
 export class OpenRouterService {
   private readonly apiUrl: string;
@@ -29,7 +28,6 @@ export class OpenRouterService {
 
     try {
       const validatedConfig = configSchema.parse(options);
-      
       this.apiKey = apiKey;
       this.apiUrl = validatedConfig.apiUrl;
       this.currentSystemMessage = validatedConfig.systemMessage;
@@ -64,7 +62,6 @@ export class OpenRouterService {
    * @returns Promise with the API response
    */
   public async sendChatMessage(userMessage: string): Promise<ApiResponse> {
-    OpenRouterLogger.log('info', 'Sending chat message', { userMessage });
     this.setUserMessage(userMessage);
     const payload = this.buildRequestPayload();
     return this.executeRequest(payload);
@@ -167,11 +164,7 @@ export class OpenRouterService {
     let lastError: Error | null = null;
     
     for (let attempt = 0; attempt < this.maxRetries; attempt++) {  
-      try {
-        console.log(`attempt ${attempt}:`, requestPayload);
-        console.log(`apiUrl: ${this.apiUrl}`);
-        console.log(`apiKey: ${this.apiKey}`);
-        
+      try {        
         const response = await fetch(`${this.apiUrl}/chat/completions`, {
           method: 'POST',
           headers: {
@@ -181,7 +174,7 @@ export class OpenRouterService {
           body: JSON.stringify(requestPayload),
           signal: AbortSignal.timeout(this.timeout)
         });
-        console.log(`response ${attempt}:`, response);
+
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new OpenRouterError(
