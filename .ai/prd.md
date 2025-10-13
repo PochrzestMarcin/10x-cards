@@ -120,7 +120,20 @@ Tytuł: Bezpieczny dostęp i autoryzacja
 Opis: Jako zalogowany użytkownik chcę mieć pewność, że moje fiszki nie są dostępne dla innych użytkowników, aby zachować prywatność i bezpieczeństwo danych.
 Kryteria akceptacji:
 - Tylko zalogowany użytkownik może wyświetlać, edytować i usuwać swoje fiszki.
+- Tylko zalogowany użytkownik może generować fiszki przy pomocy AI (openrouter) i je akceptować, modyfikować lub odrzucać.
 - Nie ma dostępu do fiszek innych użytkowników ani możliwości współdzielenia.
+- Odzyskiwanie hasła powinno być możliwe
+- Logowanie i rejestracja odbywają się na dedykowanych stronach
+- Użytkownik może logować się do systemu w prawym górnym rogu
+- Użytkownik może wylogować się z systemu w prawym górnym rogu
+
+ID: US-010
+Tytuł: Pierwsze wejście na stronę
+Opis: Jako nowy użytkownik chcę widzieć stronę powitalną zachęcającą mnie do rejestracji i wypróbowania funkcjonalności asystenta generowania fiszek. 
+Kryteria akceptacji:
+- Ma zachęcać do utworzenia konta.
+- Ma być dostępne dla niezalogowanych użytkowników
+- Ma posiadać w widocznym miejscu przyciski przenoszące do strony logowania i rejestracji (dwa osobne)
 
 ## 6. Metryki sukcesu
 1. Efektywność generowania fiszek:
