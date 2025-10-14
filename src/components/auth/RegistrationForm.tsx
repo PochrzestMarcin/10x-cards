@@ -6,12 +6,15 @@ import { toast } from 'sonner';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
 import { Input } from '../ui/input';
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { registrationSchema } from '../../lib/schemas/auth.schema';
 
 type RegistrationFormData = z.infer<typeof registrationSchema>;
 
 export function RegistrationForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const {
     register,
     handleSubmit,
@@ -26,10 +29,33 @@ export function RegistrationForm() {
   });
 
   const onSubmit = async (data: RegistrationFormData) => {
-    setIsLoading(true);
-    // Note: Registration logic will be implemented in next steps
-    toast.error('Registration not implemented yet');
-    setIsLoading(false);
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+          confirmPassword: data.confirmPassword,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to create account');
+      }
+
+      toast.success('Account created successfully!');
+      window.location.href = '/auth/login';
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to create account');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -55,13 +81,29 @@ export function RegistrationForm() {
           <label htmlFor="password" className="block text-sm font-medium">
             Password
           </label>
-          <Input
-            {...register('password')}
-            type="password"
-            id="password"
-            placeholder="••••••••"
-            disabled={isLoading}
-          />
+          <div className="relative">
+            <Input
+              {...register('password')}
+              type={showPassword ? 'text' : 'password'}
+              id="password"
+              placeholder="••••••••"
+              disabled={isLoading}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? (
+                <EyeOffIcon className="h-4 w-4 text-muted-foreground" />
+              ) : (
+                <EyeIcon className="h-4 w-4 text-muted-foreground" />
+              )}
+            </Button>
+          </div>
           {errors.password && (
             <p className="text-sm text-destructive">{errors.password.message}</p>
           )}
@@ -71,13 +113,29 @@ export function RegistrationForm() {
           <label htmlFor="confirmPassword" className="block text-sm font-medium">
             Confirm Password
           </label>
-          <Input
-            {...register('confirmPassword')}
-            type="password"
-            id="confirmPassword"
-            placeholder="••••••••"
-            disabled={isLoading}
-          />
+          <div className="relative">
+            <Input
+              {...register('confirmPassword')}
+              type={showConfirmPassword ? 'text' : 'password'}
+              id="confirmPassword"
+              placeholder="••••••••"
+              disabled={isLoading}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+            >
+              {showConfirmPassword ? (
+                <EyeOffIcon className="h-4 w-4 text-muted-foreground" />
+              ) : (
+                <EyeIcon className="h-4 w-4 text-muted-foreground" />
+              )}
+            </Button>
+          </div>
           {errors.confirmPassword && (
             <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
           )}
