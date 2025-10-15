@@ -118,3 +118,12 @@ export interface FlashcardsListQuery {
 export interface DeleteFlashcardResponseDto {
   message: string;
 }
+
+/** View model for flashcard in the UI */
+export interface FlashcardViewModel extends FlashcardDTO {
+  isEditing: boolean;
+  validationErrors?: {
+    front?: string;
+    back?: string;
+  };
+}

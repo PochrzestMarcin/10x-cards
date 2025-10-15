@@ -1,0 +1,19 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { FlashcardsView } from '../components/FlashcardsView';
+
+// Get auth data from middleware
+const { user } = Astro.locals;
+
+// Auth check is handled by middleware, but we'll double-check here
+if (!user) {
+  return Astro.redirect('/auth/login');
+}
+---
+
+<Layout title="My Flashcards" isAuthenticated={!!user} userEmail={user.email} currentPath={Astro.url.pathname}>
+  <main class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">My Flashcards</h1>
+    <FlashcardsView client:load />
+  </main>
+</Layout>
