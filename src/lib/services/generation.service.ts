@@ -58,6 +58,7 @@ Guidelines for creating flashcards:
 4. Avoid overly complex or compound questions
 5. Use clear, simple language
 6. Ensure accuracy and maintain original meaning
+7. Create maximum 10 flashcards
 
 Format your response as a JSON object with an array of flashcards, each containing 'front' and 'back' fields.
 Example:

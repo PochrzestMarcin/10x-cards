@@ -1,66 +1,105 @@
-import type { SupabaseClient } from '../../db/supabase.client.ts';
-import type { CreateFlashcardCommand, FlashcardDTO, FlashcardInsert } from '../../types';
-import { flashcardsCreateSchema } from '../schemas/flashcard.schema';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../../db/database.types';
+import type { CreateFlashcardCommand, FlashcardDTO, FlashcardsListQuery, PaginatedFlashcardsResponseDTO } from '../../types';
+import { flashcardsListQuerySchema } from '../schemas/flashcard.schema';
 
 export class FlashcardService {
   /**
-   * Creates multiple flashcards for a user, validating generation ownership if applicable
-   * @throws {Error} If validation fails or database operations fail
+   * Lists flashcards with pagination, sorting and filtering
+   */
+  static async listFlashcards(
+    query: FlashcardsListQuery,
+    userId: string,
+    supabase: SupabaseClient<Database>
+  ): Promise<PaginatedFlashcardsResponseDTO> {
+    // Validate query parameters
+    const validatedQuery = flashcardsListQuerySchema.parse(query);
+
+    // Calculate pagination offset
+    const offset = (validatedQuery.page - 1) * validatedQuery.limit;
+
+    // Build base query with user filter
+    let dbQuery = supabase
+      .from('flashcards')
+      .select('*', { count: 'exact' })
+      .eq('user_id', userId);
+
+    // Apply optional filters
+    if (validatedQuery.source) {
+      dbQuery = dbQuery.eq('source', validatedQuery.source);
+    }
+    if (validatedQuery.generation_id) {
+      dbQuery = dbQuery.eq('generation_id', validatedQuery.generation_id);
+    }
+
+    // Apply sorting
+    dbQuery = dbQuery.order(validatedQuery.sort, {
+      ascending: validatedQuery.order === 'asc'
+    });
+
+    // Apply pagination
+    dbQuery = dbQuery.range(offset, offset + validatedQuery.limit - 1);
+
+    // Execute query
+    const { data, error, count } = await dbQuery;
+
+    if (error) {
+      throw new Error('Failed to fetch flashcards');
+    }
+
+    // Map to DTOs and construct response
+    const flashcards: FlashcardDTO[] = data.map(card => ({
+      id: card.id,
+      front: card.front,
+      back: card.back,
+      source: card.source,
+      created_at: card.created_at,
+      updated_at: card.updated_at,
+      generation_id: card.generation_id
+    }));
+
+    return {
+      data: flashcards,
+      pagination: {
+        page: validatedQuery.page,
+        limit: validatedQuery.limit,
+        total: count || 0
+      }
+    };
+  }
+
+  /**
+   * Creates new flashcards for a user
    */
   static async createFlashcards(
     command: CreateFlashcardCommand,
     userId: string,
-    supabase: SupabaseClient
+    supabase: SupabaseClient<Database>
   ): Promise<FlashcardDTO[]> {
-    // Validate command structure and business rules
-    const validatedData = flashcardsCreateSchema.parse(command);
-
-    // Get unique generation IDs that need verification
-    const generationIds = [...new Set(
-      validatedData.flashcards
-        .map(f => f.generation_id)
-        .filter((id): id is number => id !== null)
-    )];
-
-    // Verify generation ownership if any AI-generated cards
-    if (generationIds.length > 0) {
-      const { data: generations, error } = await supabase
-        .from('generations')
-        .select('id')
-        .eq('user_id', userId)
-        .in('id', generationIds);
-
-      if (error) throw new Error('Failed to verify generation ownership');
-      
-      // Check if all referenced generations were found
-      const foundIds = new Set(generations?.map(g => g.id));
-      const missingIds = generationIds.filter(id => !foundIds.has(id));
-      
-      if (missingIds.length > 0) {
-        throw new Error(`Generations not found or not owned by user: ${missingIds.join(', ')}`);
-      }
-    }
-
-    // Prepare flashcards for insertion
-    const flashcardsToInsert: FlashcardInsert[] = validatedData.flashcards.map(card => ({
-      ...card,
-      user_id: userId
-    }));
-
-    // Perform bulk insert
-    const { data: createdFlashcards, error: insertError } = await supabase
+    // Insert flashcards with user_id
+    const { data, error } = await supabase
       .from('flashcards')
-      .insert(flashcardsToInsert)
-      .select('id, front, back, source, created_at, updated_at, generation_id');
+      .insert(
+        command.flashcards.map(card => ({
+          ...card,
+          user_id: userId
+        }))
+      )
+      .select();
 
-    if (insertError) {
+    if (error) {
       throw new Error('Failed to create flashcards');
     }
 
-    if (!createdFlashcards) {
-      throw new Error('No flashcards were created');
-    }
-
-    return createdFlashcards;
+    // Map to DTOs
+    return data.map(card => ({
+      id: card.id,
+      front: card.front,
+      back: card.back,
+      source: card.source,
+      created_at: card.created_at,
+      updated_at: card.updated_at,
+      generation_id: card.generation_id
+    }));
   }
 }

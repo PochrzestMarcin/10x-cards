@@ -103,3 +103,13 @@ GenerationErrorLog,
 export interface CreateFlashcardsResponseDto {
   flashcards: FlashcardDTO[];
 }
+
+/** Query parameters for listing flashcards */
+export interface FlashcardsListQuery {
+  page?: number;
+  limit?: number;
+  sort?: 'created_at' | 'source';
+  order?: 'asc' | 'desc';
+  source?: FlashcardSource;
+  generation_id?: number;
+}

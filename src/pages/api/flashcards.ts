@@ -2,8 +2,66 @@ import type { APIRoute } from 'astro';
 import { FlashcardService } from '../../lib/services/flashcard.service';
 import type { CreateFlashcardsResponseDto } from '../../types';
 import { ZodError } from 'zod';
+import { flashcardsListQuerySchema } from '../../lib/schemas/flashcard.schema';
+
 export const prerender = false;
 
+export const GET: APIRoute = async ({ request, locals }) => {
+  try {
+    // Ensure we have auth context from middleware
+    const { supabase, user } = locals;
+    
+    if (!user) {
+      return new Response(JSON.stringify({ message: 'Unauthorized' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Parse URL search params
+    const url = new URL(request.url);
+    const queryParams = Object.fromEntries(url.searchParams);
+
+    // Get paginated flashcards via service
+    const response = await FlashcardService.listFlashcards(
+      queryParams,
+      user.id,
+      supabase
+    );
+
+    return new Response(JSON.stringify(response), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+  } catch (error) {
+    console.error('Error fetching flashcards:', error);
+
+    if (error instanceof ZodError) {
+      return new Response(JSON.stringify({ 
+        message: 'Invalid query parameters',
+        errors: error.errors 
+      }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (error instanceof Error) {
+      return new Response(JSON.stringify({ message: error.message }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    return new Response(JSON.stringify({ message: 'Internal server error' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+};
+
+// Keep existing POST endpoint...
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
     // Ensure we have auth context from middleware
