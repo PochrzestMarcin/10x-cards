@@ -10,8 +10,6 @@ import { Checkbox } from '../ui/checkbox';
 import { loginSchema } from '../../lib/schemas/auth.schema';
 import { useAuthStore } from '../../lib/stores/auth.store';
 
-type LoginFormData = z.infer<typeof loginSchema>;
-
 export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const setUser = useAuthStore((state) => state.setUser);
@@ -20,7 +18,7 @@ export function LoginForm() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData>({
+  } = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
@@ -29,7 +27,7 @@ export function LoginForm() {
     },
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: z.infer<typeof loginSchema>) => {
     try {
       setIsLoading(true);
       
