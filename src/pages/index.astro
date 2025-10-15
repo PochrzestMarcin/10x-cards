@@ -1,8 +1,12 @@
 ---
 import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
+
+export const prerender = false;
+
+const { user } = Astro.locals;
 ---
 
-<Layout>
-  <Welcome />
+<Layout title="Welcome - 10x Cards" isAuthenticated={!!user} userEmail={user?.email}>
+  <Welcome isAuthenticated={!!user} />
 </Layout>

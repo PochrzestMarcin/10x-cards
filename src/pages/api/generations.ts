@@ -1,16 +1,22 @@
 import type { APIRoute } from 'astro';
 import { GenerateFlashcardsCommandSchema } from '../../lib/schemas/generation.schema';
 import { GenerationService } from '../../lib/services/generation.service';
-import { DEFAULT_USER_ID } from '../../db/supabase.client';
 
 export const prerender = false;
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
     // Extract supabase client and user from locals
-    const supabase = locals.supabase;
-    // Use default test user ID for now - auth will be implemented later
-    const userId = DEFAULT_USER_ID;
+    const { supabase, user } = locals;
+    
+    if (!user) {
+      return new Response(JSON.stringify({ message: 'Unauthorized' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    
+    const userId = user.id;
     
     // Parse and validate request body
     const body = await request.json();

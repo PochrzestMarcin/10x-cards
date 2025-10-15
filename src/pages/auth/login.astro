@@ -1,0 +1,29 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { LoginForm } from '../../components/auth/LoginForm';
+import { createSupabaseServerInstance } from '../../db/supabase.client';
+
+export const prerender = false;
+
+const supabase = createSupabaseServerInstance({
+  cookies: Astro.cookies,
+  headers: Astro.request.headers,
+});
+
+const { data: { user } } = await supabase.auth.getUser();
+
+// If user is already authenticated, redirect to generate page
+if (user) {
+  return Astro.redirect('/generate');
+}
+---
+
+<Layout title="Login - 10x Cards">
+  <div class="container max-w-md mx-auto mt-8 px-4">
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold tracking-tight">Welcome Back</h1>
+      <p class="text-muted-foreground mt-2">Sign in to your account to continue</p>
+    </div>
+    <LoginForm client:load />
+  </div>
+</Layout>
