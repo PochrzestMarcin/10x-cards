@@ -1,9 +1,16 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { FlashcardsView } from '../components/FlashcardsView';
+import { createSupabaseServerInstance } from '../db/supabase.client';
 
-// Get auth data from middleware
-const { user } = Astro.locals;
+export const prerender = false;
+
+const supabase = createSupabaseServerInstance({
+  cookies: Astro.cookies,
+  headers: Astro.request.headers,
+});
+
+const { data: { user } } = await supabase.auth.getUser();
 
 // Auth check is handled by middleware, but we'll double-check here
 if (!user) {

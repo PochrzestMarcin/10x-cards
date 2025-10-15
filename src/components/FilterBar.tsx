@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Button } from './ui/button';
 import {
   Select,
@@ -25,6 +26,14 @@ export default function FilterBar({
   onSourceChange,
   onCreateClick,
 }: FilterBarProps) {
+  const [isSelectOpen, setIsSelectOpen] = useState(false);
+  const [isButtonHovered, setIsButtonHovered] = useState(false);
+
+  const handleSourceChange = (value: string) => {
+    onSourceChange(value as FlashcardSource || null);
+    setIsSelectOpen(false);
+  };
+
   return (
     <div className="flex items-center justify-between gap-4">
       <div className="flex items-center gap-2">
@@ -33,7 +42,9 @@ export default function FilterBar({
         </label>
         <Select
           value={selectedSource || ''}
-          onValueChange={(value: string) => onSourceChange(value as FlashcardSource || null)}
+          onValueChange={handleSourceChange}
+          open={isSelectOpen}
+          onOpenChange={setIsSelectOpen}
         >
           <SelectTrigger id="source-filter" className="w-[180px]">
             <SelectValue placeholder="All sources" />
@@ -49,7 +60,12 @@ export default function FilterBar({
         </Select>
       </div>
 
-      <Button onClick={onCreateClick}>
+      <Button
+        onClick={onCreateClick}
+        onMouseEnter={() => setIsButtonHovered(true)}
+        onMouseLeave={() => setIsButtonHovered(false)}
+        className={`transition-colors ${isButtonHovered ? 'bg-primary/90' : ''}`}
+      >
         Create Flashcard
       </Button>
     </div>

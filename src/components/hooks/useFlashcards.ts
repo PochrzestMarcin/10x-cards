@@ -28,17 +28,22 @@ export function useFlashcards() {
 
   const fetchFlashcards = useCallback(async () => {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
-    try {
-      const queryParams = new URLSearchParams({
-        page: state.pagination.page.toString(),
-        limit: state.pagination.limit.toString(),
-        sort: state.sortColumn,
-        order: state.sortOrder
-      });
 
-      if (state.sourceFilter) {
-        queryParams.append('source', state.sourceFilter);
-      }
+    try {
+      const queryParams = new URLSearchParams();
+      
+      setState(prev => {
+        queryParams.set('page', prev.pagination.page.toString());
+        queryParams.set('limit', prev.pagination.limit.toString());
+        queryParams.set('sort', prev.sortColumn);
+        queryParams.set('order', prev.sortOrder);
+        
+        if (prev.sourceFilter) {
+          queryParams.set('source', prev.sourceFilter);
+        }
+        
+        return prev;
+      });
 
       const response = await fetch(`/api/flashcards?${queryParams}`);
       if (!response.ok) {
@@ -62,7 +67,7 @@ export function useFlashcards() {
         isLoading: false
       }));
     }
-  }, [state.pagination.page, state.pagination.limit, state.sortColumn, state.sortOrder, state.sourceFilter]);
+  }, []);
 
   const setPage = useCallback((page: number) => {
     setState(prev => ({
@@ -91,10 +96,15 @@ export function useFlashcards() {
     return fetchFlashcards();
   }, [fetchFlashcards]);
 
-  // Fetch flashcards when dependencies change
+  // Fetch flashcards when filters or pagination change
   useEffect(() => {
-    fetchFlashcards();
-  }, [fetchFlashcards]);
+    const timer = setTimeout(() => {
+      fetchFlashcards();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [
+    fetchFlashcards
+  ]);
 
   return {
     flashcards: state.flashcards,
