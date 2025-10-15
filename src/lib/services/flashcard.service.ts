@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../../db/database.types';
-import type { CreateFlashcardCommand, FlashcardDTO, FlashcardsListQuery, PaginatedFlashcardsResponseDTO } from '../../types';
+import type { CreateFlashcardCommand, FlashcardDTO, FlashcardsListQuery, FlashcardUpdateDto, PaginatedFlashcardsResponseDTO } from '../../types';
 import { flashcardsListQuerySchema } from '../schemas/flashcard.schema';
 
 export class FlashcardService {
@@ -101,5 +101,85 @@ export class FlashcardService {
       updated_at: card.updated_at,
       generation_id: card.generation_id
     }));
+  }
+
+  /**
+   * Updates an existing flashcard with partial data
+   * @throws Error if flashcard not found or not owned by user
+   */
+  static async updateFlashcard(
+    id: number,
+    dto: FlashcardUpdateDto,
+    userId: string,
+    supabase: SupabaseClient<Database>
+  ): Promise<FlashcardDTO> {
+    // Verify flashcard exists and is owned by user
+    const { data: existing, error: findError } = await supabase
+      .from('flashcards')
+      .select()
+      .eq('id', id)
+      .eq('user_id', userId)
+      .single();
+
+    if (findError || !existing) {
+      throw new Error('Flashcard not found');
+    }
+
+    // Update flashcard
+    const { data: updated, error: updateError } = await supabase
+      .from('flashcards')
+      .update(dto)
+      .eq('id', id)
+      .eq('user_id', userId)
+      .select()
+      .single();
+
+    if (updateError || !updated) {
+      throw new Error('Failed to update flashcard');
+    }
+
+    // Map to DTO
+    return {
+      id: updated.id,
+      front: updated.front,
+      back: updated.back,
+      source: updated.source,
+      created_at: updated.created_at,
+      updated_at: updated.updated_at,
+      generation_id: updated.generation_id
+    };
+  }
+
+  /**
+   * Deletes a flashcard
+   * @throws Error if flashcard not found or not owned by user
+   */
+  static async deleteFlashcard(
+    id: number,
+    userId: string,
+    supabase: SupabaseClient<Database>
+  ): Promise<void> {
+    // Verify flashcard exists and is owned by user
+    const { data: existing, error: findError } = await supabase
+      .from('flashcards')
+      .select()
+      .eq('id', id)
+      .eq('user_id', userId)
+      .single();
+
+    if (findError || !existing) {
+      throw new Error('Flashcard not found');
+    }
+
+    // Delete flashcard
+    const { error: deleteError } = await supabase
+      .from('flashcards')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', userId);
+
+    if (deleteError) {
+      throw new Error('Failed to delete flashcard');
+    }
   }
 }

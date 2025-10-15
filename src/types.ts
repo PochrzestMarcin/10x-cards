@@ -113,3 +113,8 @@ export interface FlashcardsListQuery {
   source?: FlashcardSource;
   generation_id?: number;
 }
+
+/** Response type for DELETE /flashcards/{id} endpoint */
+export interface DeleteFlashcardResponseDto {
+  message: string;
+}
