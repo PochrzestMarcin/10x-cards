@@ -28,7 +28,6 @@ export const GET: APIRoute = async ({ request, locals }) => {
       user.id,
       supabase
     );
-    console.log(response);
 
     return new Response(JSON.stringify(response), {
       status: 200,

@@ -7,7 +7,7 @@ import type {
   CreateFlashcardCommand,
   CreateFlashcardsResponseDto,
 } from '../../types';
-import type { FlashcardProposalViewModel } from '../FlashcardGenerationView';
+import type { FlashcardProposalViewModel } from '../generate/FlashcardGenerationView';
 
 interface UseGenerateFlashcardsResult {
   flashcardProposals: FlashcardProposalViewModel[];

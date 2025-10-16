@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Card, CardContent } from './ui/card';
-import { Button } from './ui/button';
-import { Textarea } from './ui/textarea';
+import { Card, CardContent } from '../ui/card';
+import { Button } from '../ui/button';
+import { Textarea } from '../ui/textarea';
 import { Check, X, Edit2, Save } from 'lucide-react';
 import type { FlashcardProposalViewModel } from './FlashcardGenerationView';
 

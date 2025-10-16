@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
-import type { FlashcardProposalDto } from '../types';
-import { TextInputArea } from './TextInputArea.tsx';
+import type { FlashcardProposalDto } from '../../types.ts';
+import { TextInputArea } from '../TextInputArea.tsx';
 import { GenerateButton } from './GenerateButton.tsx';
-import { SkeletonLoader } from './SkeletonLoader.tsx';
+import { SkeletonLoader } from '../SkeletonLoader.tsx';
 import { FlashcardList } from './FlashcardList.tsx';
-import { BulkSaveButton } from './BulkSaveButton.tsx';
-import { useGenerateFlashcards } from './hooks/useGenerateFlashcards';
+import { BulkSaveButton } from '../BulkSaveButton.tsx';
+import { useGenerateFlashcards } from '../hooks/useGenerateFlashcards.ts';
 
 export interface FlashcardProposalViewModel extends Omit<FlashcardProposalDto, 'source'> {
   accepted: boolean;

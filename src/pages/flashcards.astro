@@ -1,6 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { FlashcardsView } from '../components/FlashcardsView';
 import { createSupabaseServerInstance } from '../db/supabase.client';
 
 export const prerender = false;
@@ -21,6 +20,6 @@ if (!user) {
 <Layout title="My Flashcards" isAuthenticated={!!user} userEmail={user.email} currentPath={Astro.url.pathname}>
   <main class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold mb-8">My Flashcards</h1>
-    <FlashcardsView client:load />
+    
   </main>
 </Layout>
