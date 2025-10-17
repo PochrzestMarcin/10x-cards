@@ -45,7 +45,7 @@ const fetchFlashcards = useCallback(async () => {
       }
     });
     const url = `/api/flashcards?${queryParams.toString()}`;
-    const response = await fetch(`/api/flashcards?${queryParams.toString()}`, {
+    const response = await fetch(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
