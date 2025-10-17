@@ -127,3 +127,10 @@ export interface FlashcardViewModel extends FlashcardDTO {
     back?: string;
   };
 }
+
+/** Modal state for flashcard editing/creation */
+export interface ModalState {
+  isOpen: boolean;
+  mode: 'create' | 'edit';
+  flashcard: FlashcardViewModel | null;
+}

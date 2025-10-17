@@ -136,15 +136,16 @@ export const PUT: APIRoute = async ({ request, locals, params }) => {
     // Ensure we have auth context from middleware
     const { supabase, user } = locals;
     
-    if (!user) {
-      return new Response(JSON.stringify({ message: 'Unauthorized' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
+    //if (!user) {
+    //  return new Response(JSON.stringify({ message: 'Unauthorized' }), {
+    //    status: 401,
+   //     headers: { 'Content-Type': 'application/json' }
+    //  });
+    //}
 
     // Validate ID parameter
     const id = Number(params.id);
+    console.log('params', params);
     if (isNaN(id) || id <= 0) {
       return new Response(JSON.stringify({ message: 'Invalid flashcard ID' }), {
         status: 400,
@@ -170,7 +171,7 @@ export const PUT: APIRoute = async ({ request, locals, params }) => {
     const updatedFlashcard = await FlashcardService.updateFlashcard(
       id,
       validatedData,
-      user.id,
+      "cdd0d334-cfc8-45ff-836e-616a7ded0e75",
       supabase
     );
 

@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { useFlashcards } from '@/components/hooks/useFlashcards';
+import { useFlashcardModal } from '@/components/hooks/useFlashcardModal';
 import { FilterBar } from './FilterBar';
 import { FlashcardsTable } from './FlashcardsTable';
+import { FlashcardModal } from './FlashcardModal';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
-import type { FlashcardViewModel } from '@/types';
+import { toast } from 'sonner';
+import type { FlashcardViewModel, FlashcardUpdateDto } from '@/types';
 
 export function FlashcardsView() {
   const {
@@ -33,27 +36,40 @@ export function FlashcardsView() {
     setSort(column);
   };
 
-  const handleEdit = async (flashcard: FlashcardViewModel) => {
+  const handleSave = async (data: FlashcardUpdateDto) => {
     try {
-      const response = await fetch(`/api/flashcards/${flashcard.id}`, {
+      if (!modalState.flashcard?.id) {
+        throw new Error('No flashcard ID provided');
+      }
+      console.log(JSON.stringify(data));
+      const response = await fetch(`/api/flashcards/${modalState.flashcard.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          front: flashcard.front,
-          back: flashcard.back,
-          source: flashcard.source,
-        }),
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update flashcard');
+        const errorData = await response.json();
+        
+        // Handle specific error cases
+        if (response.status === 404) {
+          throw new Error('Flashcard not found');
+        } else if (response.status === 400 && errorData.errors) {
+          throw new Error('Invalid flashcard data: ' + errorData.errors.map((e: any) => e.message).join(', '));
+        } else {
+          throw new Error(errorData.message || 'Failed to update flashcard');
+        }
       }
 
+      const updatedFlashcard = await response.json();
+      toast.success('Flashcard updated successfully');
       refresh();
+      return updatedFlashcard;
     } catch (error) {
-      console.error('Error updating flashcard:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to update flashcard');
+      throw error; // Re-throw to be handled by the modal
     }
   };
 
@@ -67,11 +83,15 @@ export function FlashcardsView() {
         throw new Error('Failed to delete flashcard');
       }
 
+      toast.success('Flashcard deleted successfully');
       refresh();
     } catch (error) {
       console.error('Error deleting flashcard:', error);
+      toast.error('Failed to delete flashcard');
     }
   };
+
+  const { modalState, openEdit, close } = useFlashcardModal(handleSave);
 
   if (error) {
     return (
@@ -86,7 +106,6 @@ export function FlashcardsView() {
 
   return (
     <div className="container mx-auto py-6 space-y-6">
-
       <Card className="p-4">
         <FilterBar onSourceFilterChange={setSourceFilter} />
         
@@ -103,11 +122,19 @@ export function FlashcardsView() {
             sort={sortState}
             onSort={handleSort}
             onPageChange={setPage}
-            onEdit={handleEdit}
+            onEdit={openEdit}
             onDelete={handleDelete}
           />
         )}
       </Card>
+
+      <FlashcardModal
+        isOpen={modalState.isOpen}
+        mode={modalState.mode}
+        flashcard={modalState.flashcard}
+        onSave={handleSave}
+        onClose={close}
+      />
     </div>
   );
 }
