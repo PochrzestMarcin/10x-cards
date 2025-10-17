@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { FlashcardGenerationView } from '../components/generate/FlashcardGenerationView';
 import { createSupabaseServerInstance } from '../db/supabase.client';
+import { FlashcardsView } from '../components/my-flashcards/FlashcardsView';
 
 export const prerender = false;
 
@@ -12,15 +12,15 @@ const supabase = createSupabaseServerInstance({
 
 const { data: { user } } = await supabase.auth.getUser();
 
-// Redirect to login if not authenticated
+// Auth check is handled by middleware, but we'll double-check here
 if (!user) {
   return Astro.redirect('/auth/login');
 }
 ---
 
-<Layout title="Generate Flashcards" isAuthenticated={!!user} userEmail={user?.email} currentPath={Astro.url.pathname}>
+<Layout title="My Flashcards" isAuthenticated={!!user} userEmail={user.email} currentPath={Astro.url.pathname}>
   <main class="container mx-auto px-4 py-1">
-    <h1 class="text-2xl font-bold mb-4">Generate Flashcards</h1>
-    <FlashcardGenerationView client:load />
+    <h1 class="text-2xl font-bold mb-4">My Flashcards</h1>
+    <FlashcardsView client:load />
   </main>
 </Layout>

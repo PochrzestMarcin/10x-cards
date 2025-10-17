@@ -1,12 +1,9 @@
 import type { APIRoute } from 'astro';
-import { FlashcardService } from '../../lib/services/flashcard.service';
-import type { CreateFlashcardsResponseDto, DeleteFlashcardResponseDto } from '../../types';
+import { FlashcardService } from '../../../lib/services/flashcard.service';
+import { flashcardUpdateSchema } from '../../../lib/schemas/flashcard.schema';
 import { ZodError } from 'zod';
-import { flashcardsListQuerySchema, flashcardUpdateSchema } from '../../lib/schemas/flashcard.schema';
 
-export const prerender = false;
-
-export const GET: APIRoute = async ({ request, locals }) => {
+export const PUT: APIRoute = async ({ request, locals, params }) => {
   try {
     // Ensure we have auth context from middleware
     const { supabase, user } = locals;
@@ -18,25 +15,48 @@ export const GET: APIRoute = async ({ request, locals }) => {
       });
     }
 
-    // Parse URL search params
-    const url = new URL(request.url);
-    const queryParams = Object.fromEntries(url.searchParams);
-    // Get paginated flashcards via service
-    const response = await FlashcardService.listFlashcards(
-      queryParams,
+    // Validate ID parameter
+    const id = Number(params.id);
+    if (isNaN(id) || id <= 0) {
+      return new Response(JSON.stringify({ message: 'Invalid flashcard ID' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Parse and validate request body
+    let body;
+    try {
+      body = await request.json();
+    } catch (e) {
+      return new Response(JSON.stringify({ message: 'Invalid JSON' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Validate update data
+    const validatedData = flashcardUpdateSchema.parse(body);
+
+    // Update flashcard via service
+    const updatedFlashcard = await FlashcardService.updateFlashcard(
+      id,
+      validatedData,
       user.id,
       supabase
     );
 
-    return new Response(JSON.stringify(response), {
+    return new Response(JSON.stringify(updatedFlashcard), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
     });
 
   } catch (error) {
+    console.error('Error updating flashcard:', error);
+
     if (error instanceof ZodError) {
       return new Response(JSON.stringify({ 
-        message: 'Invalid query parameters',
+        message: 'Validation failed', 
         errors: error.errors 
       }), {
         status: 400,
@@ -45,6 +65,13 @@ export const GET: APIRoute = async ({ request, locals }) => {
     }
 
     if (error instanceof Error) {
+      if (error.message === 'Flashcard not found') {
+        return new Response(JSON.stringify({ message: error.message }), {
+          status: 404,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+
       return new Response(JSON.stringify({ message: error.message }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' }
@@ -58,8 +85,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
   }
 };
 
-// Keep existing POST endpoint...
-export const POST: APIRoute = async ({ request, locals }) => {
+export const DELETE: APIRoute = async ({ locals, params }) => {
   try {
     // Ensure we have auth context from middleware
     const { supabase, user } = locals;
@@ -70,47 +96,31 @@ export const POST: APIRoute = async ({ request, locals }) => {
         headers: { 'Content-Type': 'application/json' }
       });
     }
-    
-    const userId = user.id;
 
-    // Parse request body
-    let body;
-    try {
-      body = await request.json();
-    } catch (e) {
-      return new Response(JSON.stringify({ message: 'Invalid JSON' }), {
+    // Validate ID parameter
+    const id = Number(params.id);
+    if (isNaN(id) || id <= 0) {
+      return new Response(JSON.stringify({ message: 'Invalid flashcard ID' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
       });
     }
 
-    // Create flashcards via service
-    const flashcards = await FlashcardService.createFlashcards(body, userId, supabase);
+    // Delete flashcard via service
+    await FlashcardService.deleteFlashcard(id, user.id, supabase);
 
-    // Return success response
-    const response: CreateFlashcardsResponseDto = { flashcards };
-    return new Response(JSON.stringify(response), {
-      status: 201,
+    return new Response(JSON.stringify({
+      message: 'Flashcard deleted successfully'
+    }), {
+      status: 200,
       headers: { 'Content-Type': 'application/json' }
     });
 
   } catch (error) {
-    console.error('Error creating flashcards:', error);
-
-    // Handle known error types
-    if (error instanceof ZodError) {
-      return new Response(JSON.stringify({ 
-        message: 'Validation failed', 
-        errors: error.errors 
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
+    console.error('Error deleting flashcard:', error);
 
     if (error instanceof Error) {
-      // Handle specific error messages from service
-      if (error.message.includes('Generations not found')) {
+      if (error.message === 'Flashcard not found') {
         return new Response(JSON.stringify({ message: error.message }), {
           status: 404,
           headers: { 'Content-Type': 'application/json' }
@@ -123,7 +133,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
       });
     }
 
-    // Fallback error response
     return new Response(JSON.stringify({ message: 'Internal server error' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }

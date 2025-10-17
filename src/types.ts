@@ -103,3 +103,34 @@ GenerationErrorLog,
 export interface CreateFlashcardsResponseDto {
   flashcards: FlashcardDTO[];
 }
+
+/** Query parameters for listing flashcards */
+export interface FlashcardsListQuery {
+  page?: number;
+  limit?: number;
+  sort?: 'created_at' | 'source' | 'updated_at';
+  order?: 'asc' | 'desc';
+  source?: FlashcardSource;
+  generation_id?: number;
+}
+
+/** Response type for DELETE /flashcards/{id} endpoint */
+export interface DeleteFlashcardResponseDto {
+  message: string;
+}
+
+/** View model for flashcard in the UI */
+export interface FlashcardViewModel extends FlashcardDTO {
+  isEditing: boolean;
+  validationErrors?: {
+    front?: string;
+    back?: string;
+  };
+}
+
+/** Modal state for flashcard editing/creation */
+export interface ModalState {
+  isOpen: boolean;
+  mode: 'create' | 'edit';
+  flashcard: FlashcardViewModel | null;
+}

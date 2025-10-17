@@ -135,6 +135,14 @@ Kryteria akceptacji:
 - Ma być dostępne dla niezalogowanych użytkowników
 - Ma posiadać w widocznym miejscu przyciski przenoszące do strony logowania i rejestracji (dwa osobne)
 
+ID: US-011
+Tytuł: Wyświetlanie wszystkich fiszek które stworzyłem do tej pory (manualnie lub przy pomocy AI)
+Opis: Jako użytkownik chcę widzieć stronę My Flashcards, na której w formie tabeli będę widział wszystkie do tej pory zapisane przeze mnie fiszki. 
+Kryteria akceptacji:
+- Możliwość filtrowania po 'source'
+- Możliwość paginacji z wyborem liczby wyświetlanych fiszek na stronę (10 - 30)
+- Tabela powinna zawierać kolumny: Front, Back, Source, Created At oraz kolumnę "Akcji" z dwoma ikonami/przyciskami: Edit, Delete
+
 ## 6. Metryki sukcesu
 1. Efektywność generowania fiszek:
    - 75% wygenerowanych przez AI fiszek jest akceptowanych przez użytkownika.

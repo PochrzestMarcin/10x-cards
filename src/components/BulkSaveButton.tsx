@@ -1,6 +1,6 @@
 import { Button } from './ui/button';
 import { Save, CheckCircle } from 'lucide-react';
-import type { FlashcardProposalViewModel } from './FlashcardGenerationView';
+import type { FlashcardProposalViewModel } from './generate/FlashcardGenerationView';
 
 interface BulkSaveButtonProps {
   flashcards: FlashcardProposalViewModel[];
