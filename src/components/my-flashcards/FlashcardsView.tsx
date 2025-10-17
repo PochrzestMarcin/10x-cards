@@ -4,6 +4,7 @@ import { useFlashcardModal } from '@/components/hooks/useFlashcardModal';
 import { FilterBar } from './FilterBar';
 import { FlashcardsTable } from './FlashcardsTable';
 import { FlashcardModal } from './FlashcardModal';
+import { DeleteConfirmationDialog } from './DeleteConfirmationDialog';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -38,16 +39,17 @@ export function FlashcardsView() {
 
   const handleSave = async (data: FlashcardUpdateDto) => {
     try {
-      if (!modalState.flashcard?.id) {
-        throw new Error('No flashcard ID provided');
-      }
-      console.log(JSON.stringify(data));
-      const response = await fetch(`/api/flashcards/${modalState.flashcard.id}`, {
-        method: 'PUT',
+      const isCreating = !modalState.flashcard?.id;
+      const url = isCreating ? '/api/flashcards' : `/api/flashcards/${modalState.flashcard?.id}`;
+      const method = isCreating ? 'POST' : 'PUT';
+      const body = isCreating ? JSON.stringify({ flashcards: [data] }) : JSON.stringify(data);
+    
+      const response = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: body,
       });
 
       if (!response.ok) {
@@ -59,39 +61,70 @@ export function FlashcardsView() {
         } else if (response.status === 400 && errorData.errors) {
           throw new Error('Invalid flashcard data: ' + errorData.errors.map((e: any) => e.message).join(', '));
         } else {
-          throw new Error(errorData.message || 'Failed to update flashcard');
+          throw new Error(errorData.message || `Failed to ${isCreating ? 'create' : 'update'} flashcard`);
         }
       }
 
-      const updatedFlashcard = await response.json();
-      toast.success('Flashcard updated successfully');
+      const result = await response.json();
+      const flashcard = isCreating ? result.flashcards[0] : result;
+      toast.success(`Flashcard ${isCreating ? 'created' : 'updated'} successfully`);
       refresh();
-      return updatedFlashcard;
+      return flashcard;
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to update flashcard');
+      toast.error(error instanceof Error ? error.message : 'Failed to save flashcard');
       throw error; // Re-throw to be handled by the modal
     }
   };
 
+  const [deleteDialogState, setDeleteDialogState] = useState<{
+    isOpen: boolean;
+    flashcard: FlashcardViewModel | null;
+  }>({
+    isOpen: false,
+    flashcard: null,
+  });
+
+  const openDeleteDialog = (flashcard: FlashcardViewModel) => {
+    setDeleteDialogState({
+      isOpen: true,
+      flashcard,
+    });
+  };
+
+  const closeDeleteDialog = () => {
+    setDeleteDialogState({
+      isOpen: false,
+      flashcard: null,
+    });
+  };
+
   const handleDelete = async (flashcard: FlashcardViewModel) => {
+    openDeleteDialog(flashcard);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteDialogState.flashcard) return;
+
     try {
-      const response = await fetch(`/api/flashcards/${flashcard.id}`, {
+      const response = await fetch(`/api/flashcards/${deleteDialogState.flashcard.id}`, {
         method: 'DELETE',
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete flashcard');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to delete flashcard');
       }
 
       toast.success('Flashcard deleted successfully');
       refresh();
+      closeDeleteDialog();
     } catch (error) {
       console.error('Error deleting flashcard:', error);
-      toast.error('Failed to delete flashcard');
+      toast.error(error instanceof Error ? error.message : 'Failed to delete flashcard');
     }
   };
 
-  const { modalState, openEdit, close } = useFlashcardModal(handleSave);
+  const { modalState, openEdit, openCreate, close } = useFlashcardModal(handleSave);
 
   if (error) {
     return (
@@ -107,7 +140,10 @@ export function FlashcardsView() {
   return (
     <div className="container mx-auto py-6 space-y-6">
       <Card className="p-4">
-        <FilterBar onSourceFilterChange={setSourceFilter} />
+        <FilterBar 
+          onSourceFilterChange={setSourceFilter}
+          onCreateClick={openCreate}
+        />
         
         {isLoading ? (
           <div className="space-y-4">
@@ -134,6 +170,13 @@ export function FlashcardsView() {
         flashcard={modalState.flashcard}
         onSave={handleSave}
         onClose={close}
+      />
+
+      <DeleteConfirmationDialog
+        isOpen={deleteDialogState.isOpen}
+        flashcard={deleteDialogState.flashcard}
+        onConfirm={confirmDelete}
+        onCancel={closeDeleteDialog}
       />
     </div>
   );

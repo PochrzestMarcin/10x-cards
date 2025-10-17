@@ -45,6 +45,11 @@ export function FlashcardModal({ isOpen, mode, flashcard, onSave, onClose }: Fla
 
   const onSubmit = async (data: FlashcardUpdateDto) => {
       await onSave(data);
+      reset({
+        front: "",
+        back: "",
+        source: "manual",
+      })
       onClose();
   };
 
