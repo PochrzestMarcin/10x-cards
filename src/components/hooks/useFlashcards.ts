@@ -38,23 +38,19 @@ const fetchFlashcards = useCallback(async () => {
   setIsLoading(true);
   setError(null);
   try {
-    console.log('Fetching flashcards...')
     const queryParams = new URLSearchParams();
     Object.entries(query).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         queryParams.append(key, value.toString());
       }
     });
-    console.log('Query params:', queryParams.toString());
     const url = `/api/flashcards?${queryParams.toString()}`;
-    console.log('URL:', url);
     const response = await fetch(`/api/flashcards?${queryParams.toString()}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
     });
-    console.log('Response:', response);
     if (!response.ok) {
       throw new Error('Failed to fetch flashcards');
     }
