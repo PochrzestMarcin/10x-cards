@@ -108,7 +108,7 @@ export interface CreateFlashcardsResponseDto {
 export interface FlashcardsListQuery {
   page?: number;
   limit?: number;
-  sort?: 'created_at' | 'source';
+  sort?: 'created_at' | 'source' | 'updated_at';
   order?: 'asc' | 'desc';
   source?: FlashcardSource;
   generation_id?: number;

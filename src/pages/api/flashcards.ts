@@ -21,7 +21,6 @@ export const GET: APIRoute = async ({ request, locals }) => {
     // Parse URL search params
     const url = new URL(request.url);
     const queryParams = Object.fromEntries(url.searchParams);
-
     // Get paginated flashcards via service
     const response = await FlashcardService.listFlashcards(
       queryParams,
@@ -35,8 +34,6 @@ export const GET: APIRoute = async ({ request, locals }) => {
     });
 
   } catch (error) {
-    console.error('Error fetching flashcards:', error);
-
     if (error instanceof ZodError) {
       return new Response(JSON.stringify({ 
         message: 'Invalid query parameters',
