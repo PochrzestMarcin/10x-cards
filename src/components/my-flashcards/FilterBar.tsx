@@ -27,7 +27,7 @@ export function FilterBar({ onSourceFilterChange, onCreateClick }: FilterBarProp
         </SelectContent>
       </Select>
       </div>
-      <Button onClick={onCreateClick} className="ml-auto">
+      <Button data-test-id="create-flashcard-button" onClick={onCreateClick} className="ml-auto">
         <Plus className="h-4 w-4 mr-2" />
         Create Flashcard
       </Button>

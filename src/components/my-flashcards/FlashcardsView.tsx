@@ -138,7 +138,7 @@ export function FlashcardsView() {
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
+    <div data-test-id="flashcards-view" className="container mx-auto py-6 space-y-6">
       <Card className="p-4">
         <FilterBar 
           onSourceFilterChange={setSourceFilter}
