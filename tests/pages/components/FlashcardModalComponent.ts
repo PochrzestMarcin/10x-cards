@@ -1,5 +1,5 @@
-import type { Page } from '@playwright/test';
-import { BasePage } from '../BasePage';
+import type { Page } from "@playwright/test";
+import { BasePage } from "../BasePage";
 
 export interface FlashcardData {
   front: string;

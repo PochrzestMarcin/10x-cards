@@ -70,13 +70,13 @@ npm run dev
 ✅ **Natychmiastowy feedback** - widzisz zmiany w czasie rzeczywistym  
 ✅ **Debugowanie + edycja** - łącz debugowanie z modyfikacją kodu  
 ✅ **Trwałe zmiany** - wszystkie edycje są zapisywane na dysku  
-✅ **HMR** - Hot Module Replacement działa normalnie  
+✅ **HMR** - Hot Module Replacement działa normalnie
 
 ## Ograniczenia
 
 ⚠️ **Funkcja eksperymentalna** - może zawierać błędy  
 ⚠️ **Tylko Chrome/Edge** - działa tylko w przeglądarkach opartych na Chromium  
-⚠️ **Wymaga uprawnień** - musisz udzielić Chrome dostępu do systemu plików  
+⚠️ **Wymaga uprawnień** - musisz udzielić Chrome dostępu do systemu plików
 
 ## Wskazówki
 
@@ -124,4 +124,3 @@ npm run dev
 ---
 
 **Uwaga**: Ta funkcja jest eksperymentalna i może ulec zmianie w przyszłych wersjach Astro.
-

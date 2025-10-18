@@ -1,29 +1,23 @@
-import { useState } from 'react';
-import { toast } from 'sonner';
-import type { FlashcardProposalDto } from '../../types.ts';
-import { TextInputArea } from '../TextInputArea.tsx';
-import { GenerateButton } from './GenerateButton.tsx';
-import { SkeletonLoader } from '../SkeletonLoader.tsx';
-import { FlashcardList } from './FlashcardList.tsx';
-import { BulkSaveButton } from '../BulkSaveButton.tsx';
-import { useGenerateFlashcards } from '../hooks/useGenerateFlashcards.ts';
+import { useState } from "react";
+import { toast } from "sonner";
+import type { FlashcardProposalDto } from "../../types.ts";
+import { TextInputArea } from "../TextInputArea.tsx";
+import { GenerateButton } from "./GenerateButton.tsx";
+import { SkeletonLoader } from "../SkeletonLoader.tsx";
+import { FlashcardList } from "./FlashcardList.tsx";
+import { BulkSaveButton } from "../BulkSaveButton.tsx";
+import { useGenerateFlashcards } from "../hooks/useGenerateFlashcards.ts";
 
-export interface FlashcardProposalViewModel extends Omit<FlashcardProposalDto, 'source'> {
+export interface FlashcardProposalViewModel extends Omit<FlashcardProposalDto, "source"> {
   accepted: boolean;
   edited: boolean;
   source: "ai-full" | "ai-edited";
 }
 
 export function FlashcardGenerationView() {
-  const [textValue, setTextValue] = useState('');
-  const {
-    flashcardProposals,
-    setFlashcardProposals,
-    generationId,
-    isLoading,
-    generateFlashcards,
-    saveFlashcards,
-  } = useGenerateFlashcards();
+  const [textValue, setTextValue] = useState("");
+  const { flashcardProposals, setFlashcardProposals, generationId, isLoading, generateFlashcards, saveFlashcards } =
+    useGenerateFlashcards();
 
   const handleTextChange = (value: string) => {
     setTextValue(value);
@@ -60,18 +54,18 @@ export function FlashcardGenerationView() {
 
   const handleSaveAll = () => {
     toast.promise(saveFlashcards(flashcardProposals), {
-      loading: 'Saving all flashcards...',
+      loading: "Saving all flashcards...",
       success: `Successfully saved ${flashcardProposals.length} flashcards`,
-      error: 'Failed to save flashcards'
+      error: "Failed to save flashcards",
     });
   };
 
   const handleSaveAccepted = () => {
-    const acceptedFlashcards = flashcardProposals.filter(card => card.accepted);
+    const acceptedFlashcards = flashcardProposals.filter((card) => card.accepted);
     toast.promise(saveFlashcards(acceptedFlashcards), {
-      loading: 'Saving accepted flashcards...',
+      loading: "Saving accepted flashcards...",
       success: `Successfully saved ${acceptedFlashcards.length} flashcards`,
-      error: 'Failed to save flashcards'
+      error: "Failed to save flashcards",
     });
   };
 
@@ -85,11 +79,7 @@ export function FlashcardGenerationView() {
         placeholder="Paste your text here (1000-10000 characters)"
       />
 
-      <GenerateButton
-        onClick={handleGenerateClick}
-        disabled={!isValidText}
-        isLoading={isLoading}
-      />
+      <GenerateButton onClick={handleGenerateClick} disabled={!isValidText} isLoading={isLoading} />
 
       {isLoading ? (
         <SkeletonLoader />

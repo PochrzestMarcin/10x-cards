@@ -1,7 +1,7 @@
-import { TableCell, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Edit2, Trash2 } from 'lucide-react';
-import type { FlashcardViewModel } from '@/types';
+import { TableCell, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Edit2, Trash2 } from "lucide-react";
+import type { FlashcardViewModel } from "@/types";
 
 interface FlashcardRowProps {
   flashcard: FlashcardViewModel;
@@ -11,21 +11,21 @@ interface FlashcardRowProps {
 
 export function FlashcardRow({ flashcard, onEdit, onDelete }: FlashcardRowProps) {
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return new Date(date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
   const getSourceLabel = (source: string) => {
     switch (source) {
-      case 'ai-full':
-        return 'AI Generated';
-      case 'ai-edited':
-        return 'AI Edited';
-      case 'manual':
-        return 'Manual';
+      case "ai-full":
+        return "AI Generated";
+      case "ai-edited":
+        return "AI Edited";
+      case "manual":
+        return "Manual";
       default:
         return source;
     }
@@ -39,12 +39,7 @@ export function FlashcardRow({ flashcard, onEdit, onDelete }: FlashcardRowProps)
       <TableCell className="whitespace-nowrap">{formatDate(flashcard.created_at)}</TableCell>
       <TableCell className="text-left">
         <div className="flex justify-end gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onEdit(flashcard)}
-            className="h-8 w-8"
-          >
+          <Button variant="ghost" size="icon" onClick={() => onEdit(flashcard)} className="h-8 w-8">
             <Edit2 className="h-4 w-4" />
             <span className="sr-only">Edit flashcard</span>
           </Button>

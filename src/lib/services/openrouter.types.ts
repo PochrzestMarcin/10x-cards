@@ -7,12 +7,12 @@ export interface ModelParameters {
 
 export interface RequestPayload {
   messages: {
-    role: 'system' | 'user';
+    role: "system" | "user";
     content: string;
   }[];
   model: string;
   response_format?: {
-    type: 'json_schema';
+    type: "json_schema";
     json_schema: Record<string, unknown>;
   };
   temperature?: number;
@@ -45,6 +45,6 @@ export class OpenRouterError extends Error {
     public readonly cause?: unknown
   ) {
     super(message);
-    this.name = 'OpenRouterError';
+    this.name = "OpenRouterError";
   }
 }

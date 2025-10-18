@@ -1,18 +1,18 @@
-import type { SupabaseClient } from '../../db/supabase.client';
-import type { GenerationCreateResponseDto, FlashcardProposalDto } from '../../types';
-import { createHash } from 'crypto';
-import { OpenRouterService } from './openrouter.service';
+import type { SupabaseClient } from "../../db/supabase.client";
+import type { GenerationCreateResponseDto, FlashcardProposalDto } from "../../types";
+import { createHash } from "crypto";
+import { OpenRouterService } from "./openrouter.service";
 
 export class GenerationService {
   private readonly openRouter: OpenRouterService;
-  private readonly defaultModel = 'openai/gpt-5-mini';
+  private readonly defaultModel = "openai/gpt-5-mini";
 
   constructor(
     private readonly supabase: SupabaseClient,
     openRouterApiKey: string
   ) {
     if (!openRouterApiKey) {
-      throw new Error('OpenRouter API key is required');
+      throw new Error("OpenRouter API key is required");
     }
 
     this.openRouter = new OpenRouterService(openRouterApiKey, {
@@ -22,10 +22,10 @@ export class GenerationService {
         temperature: 0.7,
         top_p: 0.95,
         frequency_penalty: 0,
-        presence_penalty: 0
+        presence_penalty: 0,
       },
       maxRetries: 3,
-      timeout: 60000 // 60 seconds
+      timeout: 60000, // 60 seconds
     });
 
     this.openRouter.setResponseFormat({
@@ -37,13 +37,13 @@ export class GenerationService {
             type: "object",
             properties: {
               front: { type: "string" },
-              back: { type: "string" }
+              back: { type: "string" },
             },
-            required: ["front", "back"]
-          }
-        }
+            required: ["front", "back"],
+          },
+        },
       },
-      required: ["flashcards"]
+      required: ["flashcards"],
     });
   }
 
@@ -70,25 +70,20 @@ Example:
     }
   ]
 }`;
-}
+  }
 
-  async generateFlashcards(
-    sourceText: string,
-    userId: string
-  ): Promise<GenerationCreateResponseDto> {
+  async generateFlashcards(sourceText: string, userId: string): Promise<GenerationCreateResponseDto> {
     const startTime = Date.now();
 
     try {
       // Hash the source text for storage
-      const sourceTextHash = createHash('md5')
-        .update(sourceText)
-        .digest('hex');
+      const sourceTextHash = createHash("md5").update(sourceText).digest("hex");
 
-      // Generate flashcards using OpenRouter      
+      // Generate flashcards using OpenRouter
       const response = await this.openRouter.sendChatMessage(sourceText);
-      
+
       if (!response.choices?.[0]?.message?.content) {
-        throw new Error('Invalid response from OpenRouter: missing content');
+        throw new Error("Invalid response from OpenRouter: missing content");
       }
 
       // Parse the JSON response
@@ -97,26 +92,26 @@ Example:
       try {
         parsedContent = JSON.parse(content);
       } catch (e) {
-        throw new Error('Invalid JSON response from OpenRouter');
+        throw new Error("Invalid JSON response from OpenRouter");
       }
 
       // Convert to FlashcardProposalDto format
-      const flashcards: FlashcardProposalDto[] = parsedContent.flashcards.map(card => ({
+      const flashcards: FlashcardProposalDto[] = parsedContent.flashcards.map((card) => ({
         front: card.front,
         back: card.back,
-        source: 'ai-full'
+        source: "ai-full",
       }));
 
       // Store generation metadata
       const { data: generation, error } = await this.supabase
-        .from('generations')
+        .from("generations")
         .insert({
           user_id: userId,
           model: this.defaultModel,
           generated_count: flashcards.length,
           source_text_hash: sourceTextHash,
           source_text_length: sourceText.length,
-          generation_duration_ms: Date.now() - startTime
+          generation_duration_ms: Date.now() - startTime,
         })
         .select()
         .single();
@@ -128,7 +123,7 @@ Example:
       return {
         generationId: generation.id,
         draft_flashcards: flashcards,
-        generated_count: flashcards.length
+        generated_count: flashcards.length,
       };
     } catch (error) {
       // Log error and store in generation_error_logs
@@ -138,31 +133,27 @@ Example:
   }
 
   private async logGenerationError(error: unknown, sourceText: string, userId: string): Promise<void> {
-    let errorCode = 'GENERATION_FAILED';
-    let errorMessage = 'Unknown error';
+    let errorCode = "GENERATION_FAILED";
+    let errorMessage = "Unknown error";
 
     if (error instanceof Error) {
       errorMessage = error.message;
-      
+
       // Handle OpenRouter specific errors
-      if ('code' in error && typeof (error as any).code === 'string') {
+      if ("code" in error && typeof (error as any).code === "string") {
         errorCode = (error as any).code;
       }
     }
 
-    const sourceTextHash = createHash('md5')
-      .update(sourceText)
-      .digest('hex');
+    const sourceTextHash = createHash("md5").update(sourceText).digest("hex");
 
-    await this.supabase
-      .from('generation_error_logs')
-      .insert({
-        user_id: userId,
-        error_code: errorCode,
-        error_message: errorMessage,
-        model: this.defaultModel,
-        source_text_hash: sourceTextHash,
-        source_text_length: sourceText.length
-      });
+    await this.supabase.from("generation_error_logs").insert({
+      user_id: userId,
+      error_code: errorCode,
+      error_message: errorMessage,
+      model: this.defaultModel,
+      source_text_hash: sourceTextHash,
+      source_text_length: sourceText.length,
+    });
   }
 }

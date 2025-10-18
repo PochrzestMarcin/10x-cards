@@ -1,20 +1,24 @@
 # View Implementation Plan: My Flashcards
 
 ## 1. Overview
+
 The My Flashcards view allows users to manage their saved flashcards through a paginated table interface. Users can view, edit, and delete existing flashcards, as well as create new ones manually. The view supports filtering by source and includes a modal for editing/creating flashcards.
 
 ## 2. View Routing
+
 The view should be accessible under the path `/flashcards` and requires authentication.
 
 ## 3. Component Structure
+
 **FlashcardsPage** (Astro)
 └── **FlashcardsView** (React)
-    ├── **FlashcardsTable**
-       └── FlashcardRow
+├── **FlashcardsTable**
+└── FlashcardRow
 
 ## 4. Component Details
 
 ### `FlashcardsPage`
+
 - **Description**: Astro page component that serves as the container for the React components
 - **Elements**: Authentication check, FlashcardsView component
 - **Validation**: Redirects to login if user is not authenticated
@@ -22,6 +26,7 @@ The view should be accessible under the path `/flashcards` and requires authenti
 - **Props**: None
 
 ### `FlashcardsView`
+
 - **Description**: Main React component managing the flashcards list and state
 - **Elements**: FilterBar, FlashcardsTable, FlashcardModal, DeleteConfirmationDialog
 - **Handled Events**: Page changes, sort changes, filter changes
@@ -30,11 +35,12 @@ The view should be accessible under the path `/flashcards` and requires authenti
 - **Props**: None
 
 ### `FlashcardsTable`
-- **Description**: Displays flashcards in a paginated table format. 
-- **Elements**: 
+
+- **Description**: Displays flashcards in a paginated table format.
+- **Elements**:
   - Table with Columns: `Front`, `Back`, `Source` (sortable), `Updated At` (sortable)
   - Pagination controls
-- **Handled Events**: 
+- **Handled Events**:
   - Column header clicks (sorting)
   - Page navigation
 - **Validation**: None
@@ -69,7 +75,7 @@ interface FlashcardsTableState {
   itemsPerPage: number;
   totalItems: number;
   sortColumn: string;
-  sortOrder: 'asc' | 'desc';
+  sortOrder: "asc" | "desc";
   sourceFilter: FlashcardSource | null;
 }
 ```
@@ -79,6 +85,7 @@ interface FlashcardsTableState {
 ### Custom Hooks
 
 #### `useFlashcards`
+
 ```typescript
 interface UseFlashcardsReturn {
   flashcards: FlashcardViewModel[];
@@ -95,6 +102,7 @@ interface UseFlashcardsReturn {
 ## 7. API Integration
 
 ### GET /flashcards
+
 - **Request**: Query parameters for pagination, sorting, and filtering
 - **Response**: PaginatedFlashcardsResponseDTO
 - **Error Handling**: Display error message, retry option
@@ -114,7 +122,7 @@ interface UseFlashcardsReturn {
    - Sort: Valid column name
    - Order: 'asc' or 'desc'
 
-3. Authentication:
+2. Authentication:
    - Valid session required
    - Redirect to login if unauthorized
 

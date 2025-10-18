@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import type { FlashcardViewModel, ModalState, FlashcardUpdateDto } from '@/types';
+import { useState } from "react";
+import type { FlashcardViewModel, ModalState, FlashcardUpdateDto } from "@/types";
 
 export interface UseFlashcardModalReturn {
   modalState: ModalState;
@@ -9,19 +9,17 @@ export interface UseFlashcardModalReturn {
   save: (data: FlashcardUpdateDto) => Promise<void>;
 }
 
-export function useFlashcardModal(
-  onSave: (data: FlashcardUpdateDto) => Promise<void>
-): UseFlashcardModalReturn {
+export function useFlashcardModal(onSave: (data: FlashcardUpdateDto) => Promise<void>): UseFlashcardModalReturn {
   const [modalState, setModalState] = useState<ModalState>({
     isOpen: false,
-    mode: 'create',
+    mode: "create",
     flashcard: null,
   });
 
   const openCreate = () => {
     setModalState({
       isOpen: true,
-      mode: 'create',
+      mode: "create",
       flashcard: null,
     });
   };
@@ -29,13 +27,13 @@ export function useFlashcardModal(
   const openEdit = (flashcard: FlashcardViewModel) => {
     setModalState({
       isOpen: true,
-      mode: 'edit',
+      mode: "edit",
       flashcard,
     });
   };
 
   const close = () => {
-    setModalState(prev => ({
+    setModalState((prev) => ({
       ...prev,
       isOpen: false,
     }));

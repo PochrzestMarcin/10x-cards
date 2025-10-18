@@ -1,7 +1,13 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../../db/database.types';
-import type { CreateFlashcardCommand, FlashcardDTO, FlashcardsListQuery, FlashcardUpdateDto, PaginatedFlashcardsResponseDTO } from '../../types';
-import { flashcardsListQuerySchema } from '../schemas/flashcard.schema';
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "../../db/database.types";
+import type {
+  CreateFlashcardCommand,
+  FlashcardDTO,
+  FlashcardsListQuery,
+  FlashcardUpdateDto,
+  PaginatedFlashcardsResponseDTO,
+} from "../../types";
+import { flashcardsListQuerySchema } from "../schemas/flashcard.schema";
 
 export class FlashcardService {
   /**
@@ -19,22 +25,19 @@ export class FlashcardService {
     const offset = (validatedQuery.page - 1) * validatedQuery.limit;
 
     // Build base query with user filter
-    let dbQuery = supabase
-      .from('flashcards')
-      .select('*', { count: 'exact' })
-      .eq('user_id', userId);
+    let dbQuery = supabase.from("flashcards").select("*", { count: "exact" }).eq("user_id", userId);
 
     // Apply optional filters
     if (validatedQuery.source) {
-      dbQuery = dbQuery.eq('source', validatedQuery.source);
+      dbQuery = dbQuery.eq("source", validatedQuery.source);
     }
     if (validatedQuery.generation_id) {
-      dbQuery = dbQuery.eq('generation_id', validatedQuery.generation_id);
+      dbQuery = dbQuery.eq("generation_id", validatedQuery.generation_id);
     }
 
     // Apply sorting
     dbQuery = dbQuery.order(validatedQuery.sort, {
-      ascending: validatedQuery.order === 'asc'
+      ascending: validatedQuery.order === "asc",
     });
 
     // Apply pagination
@@ -44,18 +47,18 @@ export class FlashcardService {
     const { data, error, count } = await dbQuery;
 
     if (error) {
-      throw new Error('Failed to fetch flashcards');
+      throw new Error("Failed to fetch flashcards");
     }
 
     // Map to DTOs and construct response
-    const flashcards: FlashcardDTO[] = data.map(card => ({
+    const flashcards: FlashcardDTO[] = data.map((card) => ({
       id: card.id,
       front: card.front,
       back: card.back,
       source: card.source,
       created_at: card.created_at,
       updated_at: card.updated_at,
-      generation_id: card.generation_id
+      generation_id: card.generation_id,
     }));
 
     return {
@@ -63,8 +66,8 @@ export class FlashcardService {
       pagination: {
         page: validatedQuery.page,
         limit: validatedQuery.limit,
-        total: count || 0
-      }
+        total: count || 0,
+      },
     };
   }
 
@@ -78,28 +81,28 @@ export class FlashcardService {
   ): Promise<FlashcardDTO[]> {
     // Insert flashcards with user_id
     const { data, error } = await supabase
-      .from('flashcards')
+      .from("flashcards")
       .insert(
-        command.flashcards.map(card => ({
+        command.flashcards.map((card) => ({
           ...card,
-          user_id: userId
+          user_id: userId,
         }))
       )
       .select();
 
     if (error) {
-      throw new Error('Failed to create flashcards');
+      throw new Error("Failed to create flashcards");
     }
 
     // Map to DTOs
-    return data.map(card => ({
+    return data.map((card) => ({
       id: card.id,
       front: card.front,
       back: card.back,
       source: card.source,
       created_at: card.created_at,
       updated_at: card.updated_at,
-      generation_id: card.generation_id
+      generation_id: card.generation_id,
     }));
   }
 
@@ -115,27 +118,27 @@ export class FlashcardService {
   ): Promise<FlashcardDTO> {
     // Verify flashcard exists and is owned by user
     const { data: existing, error: findError } = await supabase
-      .from('flashcards')
+      .from("flashcards")
       .select()
-      .eq('id', id)
-      .eq('user_id', userId)
+      .eq("id", id)
+      .eq("user_id", userId)
       .single();
 
     if (findError || !existing) {
-      throw new Error('Flashcard not found');
+      throw new Error("Flashcard not found");
     }
 
     // Update flashcard
     const { data: updated, error: updateError } = await supabase
-      .from('flashcards')
+      .from("flashcards")
       .update(dto)
-      .eq('id', id)
-      .eq('user_id', userId)
+      .eq("id", id)
+      .eq("user_id", userId)
       .select()
       .single();
 
     if (updateError || !updated) {
-      throw new Error('Failed to update flashcard');
+      throw new Error("Failed to update flashcard");
     }
 
     // Map to DTO
@@ -146,7 +149,7 @@ export class FlashcardService {
       source: updated.source,
       created_at: updated.created_at,
       updated_at: updated.updated_at,
-      generation_id: updated.generation_id
+      generation_id: updated.generation_id,
     };
   }
 
@@ -154,32 +157,24 @@ export class FlashcardService {
    * Deletes a flashcard
    * @throws Error if flashcard not found or not owned by user
    */
-  static async deleteFlashcard(
-    id: number,
-    userId: string,
-    supabase: SupabaseClient<Database>
-  ): Promise<void> {
+  static async deleteFlashcard(id: number, userId: string, supabase: SupabaseClient<Database>): Promise<void> {
     // Verify flashcard exists and is owned by user
     const { data: existing, error: findError } = await supabase
-      .from('flashcards')
+      .from("flashcards")
       .select()
-      .eq('id', id)
-      .eq('user_id', userId)
+      .eq("id", id)
+      .eq("user_id", userId)
       .single();
 
     if (findError || !existing) {
-      throw new Error('Flashcard not found');
+      throw new Error("Flashcard not found");
     }
 
     // Delete flashcard
-    const { error: deleteError } = await supabase
-      .from('flashcards')
-      .delete()
-      .eq('id', id)
-      .eq('user_id', userId);
+    const { error: deleteError } = await supabase.from("flashcards").delete().eq("id", id).eq("user_id", userId);
 
     if (deleteError) {
-      throw new Error('Failed to delete flashcard');
+      throw new Error("Failed to delete flashcard");
     }
   }
 }

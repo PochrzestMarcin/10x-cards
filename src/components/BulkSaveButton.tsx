@@ -1,6 +1,6 @@
-import { Button } from './ui/button';
-import { Save, CheckCircle } from 'lucide-react';
-import type { FlashcardProposalViewModel } from './generate/FlashcardGenerationView';
+import { Button } from "./ui/button";
+import { Save, CheckCircle } from "lucide-react";
+import type { FlashcardProposalViewModel } from "./generate/FlashcardGenerationView";
 
 interface BulkSaveButtonProps {
   flashcards: FlashcardProposalViewModel[];
@@ -17,12 +17,12 @@ export function BulkSaveButton({
   onSaveAll,
   onSaveAccepted,
   disabled = false,
-  isLoading = false
+  isLoading = false,
 }: BulkSaveButtonProps) {
-  const acceptedCount = flashcards.filter(f => f.accepted).length;
+  const acceptedCount = flashcards.filter((f) => f.accepted).length;
   const hasAccepted = acceptedCount > 0;
   const hasFlashcards = flashcards.length > 0;
-  
+
   if (!hasFlashcards || !generationId) {
     return null;
   }
@@ -38,12 +38,8 @@ export function BulkSaveButton({
         <CheckCircle className="h-4 w-4" />
         <span>Save Accepted ({acceptedCount})</span>
       </Button>
-      
-      <Button
-        onClick={onSaveAll}
-        disabled={disabled || isLoading}
-        className="space-x-2"
-      >
+
+      <Button onClick={onSaveAll} disabled={disabled || isLoading} className="space-x-2">
         <Save className="h-4 w-4" />
         <span>Save All ({flashcards.length})</span>
       </Button>

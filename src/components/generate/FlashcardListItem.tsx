@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { Card, CardContent } from '../ui/card';
-import { Button } from '../ui/button';
-import { Textarea } from '../ui/textarea';
-import { Check, X, Edit2, Save } from 'lucide-react';
-import type { FlashcardProposalViewModel } from './FlashcardGenerationView';
+import { useState } from "react";
+import { Card, CardContent } from "../ui/card";
+import { Button } from "../ui/button";
+import { Textarea } from "../ui/textarea";
+import { Check, X, Edit2, Save } from "lucide-react";
+import type { FlashcardProposalViewModel } from "./FlashcardGenerationView";
 
 interface FlashcardListItemProps {
   flashcard: FlashcardProposalViewModel;
@@ -12,12 +12,7 @@ interface FlashcardListItemProps {
   onReject: () => void;
 }
 
-export function FlashcardListItem({
-  flashcard,
-  onAccept,
-  onEdit,
-  onReject,
-}: FlashcardListItemProps) {
+export function FlashcardListItem({ flashcard, onAccept, onEdit, onReject }: FlashcardListItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedFront, setEditedFront] = useState(flashcard.front);
   const [editedBack, setEditedBack] = useState(flashcard.back);
@@ -26,16 +21,16 @@ export function FlashcardListItem({
 
   const validateEdit = () => {
     let isValid = true;
-    
+
     if (editedFront.length > 200) {
-      setFrontError('Front text cannot exceed 200 characters');
+      setFrontError("Front text cannot exceed 200 characters");
       isValid = false;
     } else {
       setFrontError(null);
     }
 
     if (editedBack.length > 500) {
-      setBackError('Back text cannot exceed 500 characters');
+      setBackError("Back text cannot exceed 500 characters");
       isValid = false;
     } else {
       setBackError(null);
@@ -51,7 +46,7 @@ export function FlashcardListItem({
     }
   };
 
-  const cardStyle = flashcard.accepted ? 'border-green-500' : '';
+  const cardStyle = flashcard.accepted ? "border-green-500" : "";
 
   return (
     <Card className={`overflow-hidden ${cardStyle}`}>
@@ -72,7 +67,7 @@ export function FlashcardListItem({
                   ) : (
                     <span className="text-muted-foreground">Front side</span>
                   )}
-                  <span className={`${editedFront.length > 200 ? 'text-red-500' : 'text-muted-foreground'}`}>
+                  <span className={`${editedFront.length > 200 ? "text-red-500" : "text-muted-foreground"}`}>
                     {editedFront.length}/200
                   </span>
                 </div>
@@ -90,7 +85,7 @@ export function FlashcardListItem({
                   ) : (
                     <span className="text-muted-foreground">Back side</span>
                   )}
-                  <span className={`${editedBack.length > 500 ? 'text-red-500' : 'text-muted-foreground'}`}>
+                  <span className={`${editedBack.length > 500 ? "text-red-500" : "text-muted-foreground"}`}>
                     {editedBack.length}/500
                   </span>
                 </div>
@@ -105,38 +100,21 @@ export function FlashcardListItem({
 
           <div className="flex justify-end space-x-2">
             {isEditing ? (
-              <Button
-                variant="outline"
-                onClick={handleSaveEdit}
-                className="space-x-1"
-              >
+              <Button variant="outline" onClick={handleSaveEdit} className="space-x-1">
                 <Save className="h-4 w-4" />
                 <span>Save</span>
               </Button>
             ) : (
               <>
-                <Button
-                  variant="outline"
-                  onClick={onAccept}
-                  disabled={flashcard.accepted}
-                  className="space-x-1"
-                >
+                <Button variant="outline" onClick={onAccept} disabled={flashcard.accepted} className="space-x-1">
                   <Check className="h-4 w-4" />
                   <span>Accept</span>
                 </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setIsEditing(true)}
-                  className="space-x-1"
-                >
+                <Button variant="outline" onClick={() => setIsEditing(true)} className="space-x-1">
                   <Edit2 className="h-4 w-4" />
                   <span>Edit</span>
                 </Button>
-                <Button
-                  variant="outline"
-                  onClick={onReject}
-                  className="space-x-1 text-red-500 hover:text-red-700"
-                >
+                <Button variant="outline" onClick={onReject} className="space-x-1 text-red-500 hover:text-red-700">
                   <X className="h-4 w-4" />
                   <span>Reject</span>
                 </Button>

@@ -1,5 +1,11 @@
-import { useState, useCallback, useEffect } from 'react';
-import type { FlashcardViewModel, FlashcardsListQuery, FlashcardSource, PaginatedFlashcardsResponseDTO, PaginationDto } from '@/types';
+import { useState, useCallback, useEffect } from "react";
+import type {
+  FlashcardViewModel,
+  FlashcardsListQuery,
+  FlashcardSource,
+  PaginatedFlashcardsResponseDTO,
+  PaginationDto,
+} from "@/types";
 
 interface UseFlashcardsReturn {
   flashcards: FlashcardViewModel[];
@@ -23,73 +29,71 @@ export function useFlashcards(): UseFlashcardsReturn {
   const [query, setQuery] = useState<FlashcardsListQuery>({
     page: 1,
     limit: 10,
-    sort: 'created_at',
-    order: 'desc'
+    sort: "created_at",
+    order: "desc",
   });
-  
+
   const [pagination, setPagination] = useState<PaginationDto>({
     page: 1,
     limit: 10,
-    total: 0
+    total: 0,
   });
 
-  
-const fetchFlashcards = useCallback(async () => {
-  setIsLoading(true);
-  setError(null);
-  try {
-    const queryParams = new URLSearchParams();
-    Object.entries(query).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        queryParams.append(key, value.toString());
+  const fetchFlashcards = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const queryParams = new URLSearchParams();
+      Object.entries(query).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          queryParams.append(key, value.toString());
+        }
+      });
+      const url = `/api/flashcards?${queryParams.toString()}`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch flashcards");
       }
-    });
-    const url = `/api/flashcards?${queryParams.toString()}`;
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    if (!response.ok) {
-      throw new Error('Failed to fetch flashcards');
+
+      const data: PaginatedFlashcardsResponseDTO = await response.json();
+      const viewModels: FlashcardViewModel[] = data.data.map((card) => ({
+        ...card,
+        isEditing: false,
+      }));
+
+      setFlashcards(viewModels);
+      setPagination(data.pagination);
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error("An error occurred");
+      setError(error);
+    } finally {
+      setIsLoading(false);
     }
-
-    const data: PaginatedFlashcardsResponseDTO = await response.json();
-    const viewModels: FlashcardViewModel[] = data.data.map(card => ({
-      ...card,
-      isEditing: false
-    }));
-
-    setFlashcards(viewModels);
-    setPagination(data.pagination);
-  } catch (err) {
-    const error = err instanceof Error ? err : new Error('An error occurred');
-    setError(error);
-  } finally {
-    setIsLoading(false);
-  }
-}, [query]);
-
+  }, [query]);
 
   const setPage = useCallback((page: number) => {
-    setQuery(prev => ({ ...prev, page }));
+    setQuery((prev) => ({ ...prev, page }));
   }, []);
 
   const setSort = useCallback((column: string) => {
-    setQuery(prev => ({
+    setQuery((prev) => ({
       ...prev,
-      sort: column as 'created_at' | 'source',
-      order: prev.sort === column && prev.order === 'asc' ? 'desc' : 'asc',
-      page: 1 // Reset to first page when sort changes
+      sort: column as "created_at" | "source",
+      order: prev.sort === column && prev.order === "asc" ? "desc" : "asc",
+      page: 1, // Reset to first page when sort changes
     }));
   }, []);
 
   const setSourceFilter = useCallback((source: FlashcardSource | null) => {
-    setQuery(prev => ({
+    setQuery((prev) => ({
       ...prev,
       source: source || undefined,
-      page: 1 // Reset to first page when filter changes
+      page: 1, // Reset to first page when filter changes
     }));
   }, []);
 
@@ -110,6 +114,6 @@ const fetchFlashcards = useCallback(async () => {
     setPage,
     setSort,
     setSourceFilter,
-    refresh
+    refresh,
   };
 }

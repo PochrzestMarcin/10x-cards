@@ -8,19 +8,11 @@ interface Props {
 const { isAuthenticated = false } = Astro.props;
 ---
 
-<div
-  class="relative w-full mx-auto min-h-screen bg-background p-4 sm:p-8"
->
-  <div
-    class="relative max-w-4xl mx-auto rounded-2xl shadow-2xl p-8 bg-card text-card-foreground border"
-  >
+<div class="relative w-full mx-auto min-h-screen bg-background p-4 sm:p-8">
+  <div class="relative max-w-4xl mx-auto rounded-2xl shadow-2xl p-8 bg-card text-card-foreground border">
     <div class="space-y-12">
       <div class="text-center space-y-6">
-        <h1
-          class="text-6xl font-bold mb-4 text-primary"
-        >
-          Welcome to 10xCards!
-        </h1>
+        <h1 class="text-6xl font-bold mb-4 text-primary">Welcome to 10xCards!</h1>
         <p class="text-2xl text-muted-foreground max-w-2xl mx-auto">
           Create effective flashcards instantly with artificial intelligence
         </p>
@@ -28,11 +20,7 @@ const { isAuthenticated = false } = Astro.props;
 
       <div class="flex flex-col gap-8 max-w-2xl mx-auto">
         <div class="rounded-xl p-6 border bg-card">
-          <h2
-            class="text-2xl font-semibold mb-4 text-primary"
-          >
-            Why 10xCards?
-          </h2>
+          <h2 class="text-2xl font-semibold mb-4 text-primary">Why 10xCards?</h2>
           <ul class="space-y-4">
             <li class="flex items-start space-x-3">
               <span class="text-primary text-2xl">✨</span>
@@ -51,39 +39,38 @@ const { isAuthenticated = false } = Astro.props;
 
         <div class="text-center space-y-6">
           <p class="text-xl text-muted-foreground">
-            {isAuthenticated 
-              ? "Ready to create more flashcards? Let's get started!"
-              : "Join the community learning more effectively with AI"
+            {
+              isAuthenticated
+                ? "Ready to create more flashcards? Let's get started!"
+                : "Join the community learning more effectively with AI"
             }
           </p>
           <div class="flex justify-center gap-4">
-            {isAuthenticated ? (
-              <a href="/generate">
-                <Button
-                  class="px-8 py-6 text-lg rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
-                >
-                  Start Generating
-                </Button>
-              </a>
-            ) : (
-              <>
-                <a href="/auth/register">
-                  <Button
-                    class="px-8 py-6 text-lg rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
-                  >
-                    Sign up
+            {
+              isAuthenticated ? (
+                <a href="/generate">
+                  <Button class="px-8 py-6 text-lg rounded-xl shadow-lg transition-all duration-200 hover:scale-105">
+                    Start Generating
                   </Button>
                 </a>
-                <a href="/auth/login">
-                  <Button
-                    variant="outline"
-                    class="px-8 py-6 text-lg rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
-                  >
-                    Sign in
-                  </Button>
-                </a>
-              </>
-            )}
+              ) : (
+                <>
+                  <a href="/auth/register">
+                    <Button class="px-8 py-6 text-lg rounded-xl shadow-lg transition-all duration-200 hover:scale-105">
+                      Sign up
+                    </Button>
+                  </a>
+                  <a href="/auth/login">
+                    <Button
+                      variant="outline"
+                      class="px-8 py-6 text-lg rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
+                    >
+                      Sign in
+                    </Button>
+                  </a>
+                </>
+              )
+            }
           </div>
         </div>
       </div>

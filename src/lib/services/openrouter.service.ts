@@ -1,7 +1,7 @@
-import { z } from 'zod';
-import type { ModelParameters, RequestPayload, ApiResponse } from './openrouter.types';
-import { OpenRouterError } from './openrouter.types';
-import { apiResponseSchema, modelParametersSchema, configSchema } from './openrouter.schema';
+import { z } from "zod";
+import type { ModelParameters, RequestPayload, ApiResponse } from "./openrouter.types";
+import { OpenRouterError } from "./openrouter.types";
+import { apiResponseSchema, modelParametersSchema, configSchema } from "./openrouter.schema";
 
 export class OpenRouterService {
   private readonly apiUrl: string;
@@ -11,19 +11,13 @@ export class OpenRouterService {
   private currentModelName: string;
   private currentModelParameters: ModelParameters;
   private currentResponseFormat?: Record<string, unknown>;
-    
+
   private readonly maxRetries: number;
   private readonly timeout: number;
 
-  constructor(
-    apiKey: string,
-    options: z.input<typeof configSchema> = {}
-  ) {
+  constructor(apiKey: string, options: z.input<typeof configSchema> = {}) {
     if (!apiKey) {
-      throw new OpenRouterError(
-        'API key is required',
-        'MISSING_API_KEY'
-      );
+      throw new OpenRouterError("API key is required", "MISSING_API_KEY");
     }
 
     try {
@@ -40,14 +34,13 @@ export class OpenRouterService {
       };
       this.timeout = validatedConfig.timeout;
       this.maxRetries = validatedConfig.maxRetries;
-      this.currentUserMessage = '';
+      this.currentUserMessage = "";
     } catch (error) {
       if (error instanceof z.ZodError) {
         throw new OpenRouterError(
-          'Invalid configuration: ' + error.errors.map((e: z.ZodError['errors'][number]) => 
-            `${e.path.join('.')}: ${e.message}`
-          ).join(', '),
-          'INVALID_CONFIG',
+          "Invalid configuration: " +
+            error.errors.map((e: z.ZodError["errors"][number]) => `${e.path.join(".")}: ${e.message}`).join(", "),
+          "INVALID_CONFIG",
           undefined,
           error
         );
@@ -92,10 +85,7 @@ export class OpenRouterService {
       JSON.stringify(schema);
       this.currentResponseFormat = schema;
     } catch (error) {
-      throw new OpenRouterError(
-        'Invalid response format schema',
-        'INVALID_RESPONSE_FORMAT_SCHEMA'
-      );
+      throw new OpenRouterError("Invalid response format schema", "INVALID_RESPONSE_FORMAT_SCHEMA");
     }
   }
 
@@ -106,14 +96,11 @@ export class OpenRouterService {
    */
   public setModel(name: string, parameters?: ModelParameters): void {
     if (!name) {
-      throw new OpenRouterError(
-        'Model name is required',
-        'INVALID_MODEL_NAME'
-      );
+      throw new OpenRouterError("Model name is required", "INVALID_MODEL_NAME");
     }
-    
+
     this.currentModelName = name;
-    
+
     if (parameters) {
       const validatedParams = modelParametersSchema.parse(parameters);
       this.currentModelParameters = validatedParams;
@@ -125,30 +112,30 @@ export class OpenRouterService {
    * @returns The request payload
    */
   private buildRequestPayload(): RequestPayload {
-    const messages: { role: 'system' | 'user'; content: string }[] = [];
-    
+    const messages: { role: "system" | "user"; content: string }[] = [];
+
     if (this.currentSystemMessage) {
       messages.push({
-        role: 'system',
-        content: this.currentSystemMessage
+        role: "system",
+        content: this.currentSystemMessage,
       });
     }
 
     messages.push({
-      role: 'user',
-      content: this.currentUserMessage
+      role: "user",
+      content: this.currentUserMessage,
     });
 
     const payload: RequestPayload = {
       messages,
       model: this.currentModelName,
-      ...this.currentModelParameters
+      ...this.currentModelParameters,
     };
 
     if (this.currentResponseFormat) {
       payload.response_format = {
         type: "json_schema",
-        json_schema: this.currentResponseFormat
+        json_schema: this.currentResponseFormat,
       };
     }
 
@@ -162,24 +149,24 @@ export class OpenRouterService {
    */
   private async executeRequest(requestPayload: RequestPayload): Promise<ApiResponse> {
     let lastError: Error | null = null;
-    
-    for (let attempt = 0; attempt < this.maxRetries; attempt++) {  
-      try {        
+
+    for (let attempt = 0; attempt < this.maxRetries; attempt++) {
+      try {
         const response = await fetch(`${this.apiUrl}/chat/completions`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.apiKey}`
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${this.apiKey}`,
           },
           body: JSON.stringify(requestPayload),
-          signal: AbortSignal.timeout(this.timeout)
+          signal: AbortSignal.timeout(this.timeout),
         });
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new OpenRouterError(
             errorData.message || `HTTP error ${response.status}`,
-            'API_ERROR',
+            "API_ERROR",
             response.status,
             errorData
           );
@@ -190,30 +177,30 @@ export class OpenRouterService {
         return validatedResponse;
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
-        
+
         if (error instanceof OpenRouterError) {
           // Don't retry client errors (4xx)
           if (error.status && error.status < 500) {
             throw error;
           }
         }
-        
+
         // If this was the last attempt, throw the error
         if (attempt === this.maxRetries - 1) {
           throw new OpenRouterError(
-            'Failed to execute request after multiple retries',
-            'MAX_RETRIES_EXCEEDED',
+            "Failed to execute request after multiple retries",
+            "MAX_RETRIES_EXCEEDED",
             undefined,
             lastError
           );
         }
-        
+
         // Wait before retrying (exponential backoff)
-        await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+        await new Promise((resolve) => setTimeout(resolve, Math.pow(2, attempt) * 1000));
       }
     }
 
     // This should never happen due to the throw in the loop
-    throw lastError || new Error('Unknown error');
-  }  
+    throw lastError || new Error("Unknown error");
+  }
 }

@@ -1,25 +1,29 @@
 # View Implementation Plan: My Flashcards
 
 ## 1. Overview
+
 The My Flashcards view allows users to manage their saved flashcards through a paginated table interface. Users can view, edit, and delete existing flashcards, as well as create new ones manually. The view supports filtering by source and includes a modal for editing/creating flashcards.
 
 ## 2. View Routing
+
 The view should be accessible under the path `/flashcards` and requires authentication.
 
 ## 3. Component Structure
+
 **FlashcardsPage** (Astro)
 └── **FlashcardsView** (React)
-    ├── **FilterBar**
-    │   ├── SourceFilter
-    │   └── CreateButton
-    ├── **FlashcardsTable**
-    │   └── FlashcardRow
-    ├── **FlashcardModal**
-    └── **DeleteConfirmationDialog**
+├── **FilterBar**
+│ ├── SourceFilter
+│ └── CreateButton
+├── **FlashcardsTable**
+│ └── FlashcardRow
+├── **FlashcardModal**
+└── **DeleteConfirmationDialog**
 
 ## 4. Component Details
 
 ### `FlashcardsPage`
+
 - **Description**: Astro page component that serves as the container for the React components
 - **Elements**: Authentication check, FlashcardsView component
 - **Validation**: Redirects to login if user is not authenticated
@@ -27,6 +31,7 @@ The view should be accessible under the path `/flashcards` and requires authenti
 - **Props**: None
 
 ### `FlashcardsView`
+
 - **Description**: Main React component managing the flashcards list and state
 - **Elements**: FilterBar, FlashcardsTable, FlashcardModal, DeleteConfirmationDialog
 - **Handled Events**: Page changes, sort changes, filter changes
@@ -35,14 +40,15 @@ The view should be accessible under the path `/flashcards` and requires authenti
 - **Props**: None
 
 ### `FilterBar`
+
 - **Description**: Contains filtering controls and create button
-- **Elements**: 
+- **Elements**:
   - Source filter dropdown (shadcn/ui Select)
   - "Create Flashcard" button (shadcn/ui Button)
 - **Handled Events**: Source selection change, create button click
 - **Validation**: None
 - **Types**: Uses FlashcardSource
-- **Props**: 
+- **Props**:
   ```typescript
   {
     selectedSource: FlashcardSource | null;
@@ -52,12 +58,13 @@ The view should be accessible under the path `/flashcards` and requires authenti
   ```
 
 ### `FlashcardsTable`
+
 - **Description**: Displays flashcards in a paginated table format
-- **Elements**: 
+- **Elements**:
   - Table with sortable columns
   - Pagination controls
   - Action buttons per row
-- **Handled Events**: 
+- **Handled Events**:
   - Column header clicks (sorting)
   - Page navigation
   - Edit/delete button clicks
@@ -77,16 +84,17 @@ The view should be accessible under the path `/flashcards` and requires authenti
   ```
 
 ### `FlashcardModal`
+
 - **Description**: Modal for editing or creating flashcards
-- **Elements**: 
+- **Elements**:
   - Form with front/back fields
   - Save/Cancel buttons
   - Validation messages
-- **Handled Events**: 
+- **Handled Events**:
   - Form submission
   - Field changes
   - Modal close
-- **Validation**: 
+- **Validation**:
   - Front: Required, ≤200 chars
   - Back: Required, ≤500 chars
 - **Types**: Uses FlashcardViewModel, FlashcardUpdateDto
@@ -102,8 +110,9 @@ The view should be accessible under the path `/flashcards` and requires authenti
   ```
 
 ### `DeleteConfirmationDialog`
+
 - **Description**: Confirmation dialog for flashcard deletion
-- **Elements**: 
+- **Elements**:
   - Confirmation message
   - Confirm/Cancel buttons
 - **Handled Events**: Confirm/cancel clicks
@@ -136,13 +145,13 @@ interface FlashcardsTableState {
   itemsPerPage: number;
   totalItems: number;
   sortColumn: string;
-  sortOrder: 'asc' | 'desc';
+  sortOrder: "asc" | "desc";
   sourceFilter: FlashcardSource | null;
 }
 
 interface ModalState {
   isOpen: boolean;
-  mode: 'create' | 'edit';
+  mode: "create" | "edit";
   flashcard: FlashcardViewModel | null;
 }
 
@@ -157,6 +166,7 @@ interface DeleteDialogState {
 ### Custom Hooks
 
 #### `useFlashcards`
+
 ```typescript
 interface UseFlashcardsReturn {
   flashcards: FlashcardViewModel[];
@@ -171,6 +181,7 @@ interface UseFlashcardsReturn {
 ```
 
 #### `useFlashcardModal`
+
 ```typescript
 interface UseFlashcardModalReturn {
   modalState: ModalState;
@@ -182,6 +193,7 @@ interface UseFlashcardModalReturn {
 ```
 
 #### `useFlashcardActions`
+
 ```typescript
 interface UseFlashcardActionsReturn {
   deleteState: DeleteDialogState;
@@ -194,16 +206,19 @@ interface UseFlashcardActionsReturn {
 ## 7. API Integration
 
 ### GET /flashcards
+
 - **Request**: Query parameters for pagination, sorting, and filtering
 - **Response**: PaginatedFlashcardsResponseDTO
 - **Error Handling**: Display error message, retry option
 
 ### PUT /flashcards/{id}
+
 - **Request**: FlashcardUpdateDto
 - **Response**: FlashcardDTO
 - **Error Handling**: Show validation errors, maintain form state
 
 ### DELETE /flashcards/{id}
+
 - **Request**: None
 - **Response**: DeleteFlashcardResponseDto
 - **Error Handling**: Show error message, retry option

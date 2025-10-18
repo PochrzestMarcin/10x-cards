@@ -1,8 +1,8 @@
-import type { APIRoute } from 'astro';
-import { FlashcardService } from '../../lib/services/flashcard.service';
-import type { CreateFlashcardsResponseDto, DeleteFlashcardResponseDto } from '../../types';
-import { ZodError } from 'zod';
-import { flashcardsListQuerySchema, flashcardUpdateSchema } from '../../lib/schemas/flashcard.schema';
+import type { APIRoute } from "astro";
+import { FlashcardService } from "../../lib/services/flashcard.service";
+import type { CreateFlashcardsResponseDto, DeleteFlashcardResponseDto } from "../../types";
+import { ZodError } from "zod";
+import { flashcardsListQuerySchema, flashcardUpdateSchema } from "../../lib/schemas/flashcard.schema";
 
 export const prerender = false;
 
@@ -10,11 +10,11 @@ export const GET: APIRoute = async ({ request, locals }) => {
   try {
     // Ensure we have auth context from middleware
     const { supabase, user } = locals;
-    
+
     if (!user) {
-      return new Response(JSON.stringify({ message: 'Unauthorized' }), {
+      return new Response(JSON.stringify({ message: "Unauthorized" }), {
         status: 401,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" },
       });
     }
 
@@ -22,38 +22,36 @@ export const GET: APIRoute = async ({ request, locals }) => {
     const url = new URL(request.url);
     const queryParams = Object.fromEntries(url.searchParams);
     // Get paginated flashcards via service
-    const response = await FlashcardService.listFlashcards(
-      queryParams,
-      user.id,
-      supabase
-    );
+    const response = await FlashcardService.listFlashcards(queryParams, user.id, supabase);
 
     return new Response(JSON.stringify(response), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { "Content-Type": "application/json" },
     });
-
   } catch (error) {
     if (error instanceof ZodError) {
-      return new Response(JSON.stringify({ 
-        message: 'Invalid query parameters',
-        errors: error.errors 
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({
+          message: "Invalid query parameters",
+          errors: error.errors,
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     if (error instanceof Error) {
       return new Response(JSON.stringify({ message: error.message }), {
         status: 500,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" },
       });
     }
 
-    return new Response(JSON.stringify({ message: 'Internal server error' }), {
+    return new Response(JSON.stringify({ message: "Internal server error" }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { "Content-Type": "application/json" },
     });
   }
 };
@@ -63,14 +61,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
   try {
     // Ensure we have auth context from middleware
     const { supabase, user } = locals;
-    
+
     if (!user) {
-      return new Response(JSON.stringify({ message: 'Unauthorized' }), {
+      return new Response(JSON.stringify({ message: "Unauthorized" }), {
         status: 401,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" },
       });
     }
-    
+
     const userId = user.id;
 
     // Parse request body
@@ -78,9 +76,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
     try {
       body = await request.json();
     } catch (e) {
-      return new Response(JSON.stringify({ message: 'Invalid JSON' }), {
+      return new Response(JSON.stringify({ message: "Invalid JSON" }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" },
       });
     }
 
@@ -91,42 +89,44 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const response: CreateFlashcardsResponseDto = { flashcards };
     return new Response(JSON.stringify(response), {
       status: 201,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { "Content-Type": "application/json" },
     });
-
   } catch (error) {
-    console.error('Error creating flashcards:', error);
+    console.error("Error creating flashcards:", error);
 
     // Handle known error types
     if (error instanceof ZodError) {
-      return new Response(JSON.stringify({ 
-        message: 'Validation failed', 
-        errors: error.errors 
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({
+          message: "Validation failed",
+          errors: error.errors,
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     if (error instanceof Error) {
       // Handle specific error messages from service
-      if (error.message.includes('Generations not found')) {
+      if (error.message.includes("Generations not found")) {
         return new Response(JSON.stringify({ message: error.message }), {
           status: 404,
-          headers: { 'Content-Type': 'application/json' }
+          headers: { "Content-Type": "application/json" },
         });
       }
 
       return new Response(JSON.stringify({ message: error.message }), {
         status: 500,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" },
       });
     }
 
     // Fallback error response
-    return new Response(JSON.stringify({ message: 'Internal server error' }), {
+    return new Response(JSON.stringify({ message: "Internal server error" }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { "Content-Type": "application/json" },
     });
   }
 };
