@@ -27,5 +27,20 @@ export async function loginAsTestUser(page: Page) {
   // Wait for and click submit button
   const submitButton = page.locator('button[data-test-id="sign-in-button"]');
   await submitButton.waitFor({ state: 'visible' });
-  await Promise.all([page.waitForNavigation({ waitUntil: 'networkidle' }), submitButton.click()]);
+  await submitButton.click();
+  
+  // Wait for navigation to /generate page (successful login)
+  await page.waitForURL('**/generate', { timeout: 10000 });
+  
+  // Verify we're actually logged in by checking for user-specific content
+  // Wait for the page to load completely
+  await page.waitForLoadState('networkidle');
+  
+  // Additional verification: check that we're on the generate page and not redirected back to login
+  const currentUrl = page.url();
+  if (currentUrl.includes('/auth/login')) {
+    throw new Error('Login failed - redirected back to login page');
+  }
+  
+  console.log('Login successful - navigated to:', currentUrl);
 }
