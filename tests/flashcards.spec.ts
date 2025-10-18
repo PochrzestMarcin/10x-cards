@@ -1,10 +1,14 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { FlashcardsViewPage } from './pages/FlashcardsViewPage';
+import { loginAsTestUser } from './helpers/auth.helper';
 
 test.describe('Flashcards Management', () => {
   let flashcardsPage: FlashcardsViewPage;
 
   test.beforeEach(async ({ page }) => {
+    // Ensure we're logged in before accessing protected routes
+    await loginAsTestUser(page);
+    
     flashcardsPage = new FlashcardsViewPage(page);
     await flashcardsPage.goto();
   });

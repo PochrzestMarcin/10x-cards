@@ -22,6 +22,8 @@ export class FlashcardsViewPage extends BasePage {
   // Actions
   async goto() {
     await this.page.goto('/flashcards');
+    // Wait for navigation and page load
+    await this.page.waitForLoadState('networkidle');
     await this.waitForElement(this.container);
   }
 
