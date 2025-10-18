@@ -38,6 +38,12 @@ The project utilizes a modern tech stack to deliver a fast, interactive, and sca
 
 - **[OpenRouter.ai](https://openrouter.ai/)**: A service that provides access to a wide range of LLMs (from OpenAI, Anthropic, Google, etc.) for generating flashcards.
 
+### Testing
+
+- **[Vitest](https://vitest.dev/) + [React Testing Library](https://testing-library.com/react)**: For unit and integration testing of React components and services
+- **[Playwright](https://playwright.dev/)**: For end-to-end testing across multiple browsers
+- **[Lighthouse](https://developers.google.com/web/tools/lighthouse)**: For performance testing and monitoring
+
 ### DevOps
 
 - **[GitHub Actions](https://github.com/features/actions)**: For continuous integration and deployment pipelines.
