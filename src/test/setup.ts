@@ -1,20 +1,26 @@
-import '@testing-library/jest-dom/vitest';
-import { cleanup } from '@testing-library/react';
-import { afterAll, afterEach, beforeAll, vi } from 'vitest';
-import { server } from './mocks/server';
+import "@testing-library/jest-dom/vitest";
+import { cleanup } from "@testing-library/react";
+import { afterAll, afterEach, beforeAll, vi } from "vitest";
+import { server } from "./mocks/server";
 
 // Mock ResizeObserver
 class ResizeObserverMock {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+  observe() {
+    // Mock implementation
+  }
+  unobserve() {
+    // Mock implementation
+  }
+  disconnect() {
+    // Mock implementation
+  }
 }
 
 // Mock window.ResizeObserver
 window.ResizeObserver = ResizeObserverMock;
 
 // Mock matchMedia
-window.matchMedia = vi.fn().mockImplementation(query => ({
+window.matchMedia = vi.fn().mockImplementation((query) => ({
   matches: false,
   media: query,
   onchange: null,
@@ -26,7 +32,7 @@ window.matchMedia = vi.fn().mockImplementation(query => ({
 }));
 
 // Establish API mocking before all tests
-beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
+beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
 
 // Reset any request handlers that we may add during the tests,
 // so they don't affect other tests.

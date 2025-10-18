@@ -23,21 +23,21 @@ const { title = "10x Cards", isAuthenticated = false, userEmail, currentPath } =
     <title>{title}</title>
     <script is:inline>
       // Immediately-invoked script to set theme before any content loads
-      (function() {
+      (function () {
         function getThemePreference() {
-          if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-            return localStorage.getItem('theme');
+          if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
+            return localStorage.getItem("theme");
           }
-          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
         }
 
         const theme = getThemePreference();
 
         // Add/remove class before any content loads to avoid FOIT
-        if (theme === 'dark') {
-          document.documentElement.classList.add('dark');
+        if (theme === "dark") {
+          document.documentElement.classList.add("dark");
         } else {
-          document.documentElement.classList.remove('dark');
+          document.documentElement.classList.remove("dark");
         }
 
         // Make theme available immediately to any script that needs it

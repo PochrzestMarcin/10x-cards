@@ -1,5 +1,5 @@
-import type { FlashcardProposalViewModel } from './FlashcardGenerationView';
-import { FlashcardListItem } from './FlashcardListItem';
+import type { FlashcardProposalViewModel } from "./FlashcardGenerationView";
+import { FlashcardListItem } from "./FlashcardListItem";
 
 interface FlashcardListProps {
   flashcards: FlashcardProposalViewModel[];

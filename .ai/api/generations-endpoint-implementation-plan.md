@@ -1,45 +1,52 @@
 # API Endpoint Implementation Plan: POST `/generations`
 
 ## 1. Endpoint Overview
+
 Initiate the AI flashcard generation workflow. Accepts user-supplied source text (1000-10 000 chars), triggers the AI service, stores generation metadata, and returns draft flashcards to the requester.
 
 ## 2. Request Details
+
 - HTTP Method: **POST**
-- URL: `/api/generations`  *(Astro server endpoint)*
+- URL: `/api/generations` _(Astro server endpoint)_
 - Headers:
   - `Authorization: Bearer <JWT>` – Supabase Auth session
   - `Content-Type: application/json`
 - Body (`GenerateFlashcardsCommand`):
+
 ```jsonc
 {
-  "source_text": "<user provided string 1000-10000 chars>"
+  "source_text": "<user provided string 1000-10000 chars>",
 }
 ```
-- Query/Path params: *none*
+
+- Query/Path params: _none_
 
 ## 3. Used Types
+
 - `GenerateFlashcardsCommand` – already defined in `src/types.ts`
 - `FlashcardProposalDto` – already defined
 - `GenerationCreateResponseDto` – already defined
 
 ## 4. Response Details
-Status  | Content
-------- | -------
-201 Created | `GenerationCreateResponseDto`:
- ```json
- {
-    "generation_id": 123,
-    "draft_flashcards": [
-        { "front": "Generated question", "back": "Generated Answer", "source": "ai-full" }
-    ],
-    "generated_count": 5
- }
- ```
+
+| Status      | Content                        |
+| ----------- | ------------------------------ |
+| 201 Created | `GenerationCreateResponseDto`: |
+
+```json
+{
+  "generation_id": 123,
+  "draft_flashcards": [{ "front": "Generated question", "back": "Generated Answer", "source": "ai-full" }],
+  "generated_count": 5
+}
+```
+
 400 Bad Request | `{ error: string; details?: ZodError }`
 401 Unauthorized | `{ error: "unauthorized" }`
 500 Internal Server Error | `{ error: string }`
 
 ## 5. Data Flow
+
 1. **Astro API Route** (`src/pages/api/generations.post.ts`)
    - Extract `supabase` & `user` from `Astro.locals`.
    - Parse and validate body via Zod, `source_text` must have characters
@@ -54,6 +61,7 @@ Status  | Content
 4. API route returns 201 JSON.
 
 ## 6. Security Considerations
+
 - **Auth**: Require Supabase session; short-circuit 401 if `user` null.
 - **Authorization**: Generation is always scoped to authenticated user ID; never allow cross-user access.
 - Input size limits enforced by Zod + `Request` body size limit in Astro middleware (e.g. 20 KB).
@@ -66,12 +74,14 @@ Status  | Content
 - **Database Error (500)**: in case of errors with db interaction, return 500 including error logging.
 
 ## 8. Performance Considerations
+
 - **Timeout for external AI call**: Set time limit of 60 seconds for waiting for response from external AI service, not to block application resources.
 - **Asynchronous processing**: Consider asynchronous data processing of generation, especially under heavy duty conditions.
 - **Optimization of database queries**: Reassure, that database queries both get and insert are optimized to minimize the delays.
 - **Monitoring**: Implement mechanisms for performance monitoring of the endpoint and the external AI service
 
 ## 9. Implementation Steps
+
 1. **Routes**
    - Create `src/pages/api/generations.ts` with handler skeleton.
 2. **Validation**

@@ -1,6 +1,6 @@
-import type { Page } from '@playwright/test';
-import { BasePage } from './BasePage';
-import { FlashcardModalComponent } from './components/FlashcardModalComponent';
+import type { Page } from "@playwright/test";
+import { BasePage } from "./BasePage";
+import { FlashcardModalComponent } from "./components/FlashcardModalComponent";
 
 export class FlashcardsViewPage extends BasePage {
   readonly flashcardModal: FlashcardModalComponent;
@@ -21,9 +21,9 @@ export class FlashcardsViewPage extends BasePage {
 
   // Actions
   async goto() {
-    await this.page.goto('/flashcards');
+    await this.page.goto("/flashcards");
     // Wait for navigation and page load
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState("networkidle");
     await this.waitForElement(this.container);
   }
 

@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { toast } from 'sonner';
-import { Button } from '../ui/button';
-import { Card } from '../ui/card';
-import { Input } from '../ui/input';
-import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import { registrationSchema } from '../../lib/schemas/auth.schema';
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { toast } from "sonner";
+import { Button } from "../ui/button";
+import { Card } from "../ui/card";
+import { Input } from "../ui/input";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { registrationSchema } from "../../lib/schemas/auth.schema";
 
 type RegistrationFormData = z.infer<typeof registrationSchema>;
 
@@ -22,19 +22,19 @@ export function RegistrationForm() {
   } = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
     defaultValues: {
-      email: '',
-      password: '',
-      confirmPassword: '',
+      email: "",
+      password: "",
+      confirmPassword: "",
     },
   });
 
   const onSubmit = async (data: RegistrationFormData) => {
     try {
       setIsLoading(true);
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email: data.email,
@@ -46,13 +46,13 @@ export function RegistrationForm() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to create account');
+        throw new Error(result.error || "Failed to create account");
       }
 
-      toast.success('Account created successfully!');
-      window.location.href = '/auth/login';
+      toast.success("Account created successfully!");
+      window.location.href = "/auth/login";
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to create account');
+      toast.error(error instanceof Error ? error.message : "Failed to create account");
     } finally {
       setIsLoading(false);
     }
@@ -65,16 +65,8 @@ export function RegistrationForm() {
           <label htmlFor="email" className="block text-sm font-medium">
             Email
           </label>
-          <Input
-            {...register('email')}
-            type="email"
-            id="email"
-            placeholder="you@example.com"
-            disabled={isLoading}
-          />
-          {errors.email && (
-            <p className="text-sm text-destructive">{errors.email.message}</p>
-          )}
+          <Input {...register("email")} type="email" id="email" placeholder="you@example.com" disabled={isLoading} />
+          {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
         </div>
 
         <div className="space-y-2">
@@ -83,8 +75,8 @@ export function RegistrationForm() {
           </label>
           <div className="relative">
             <Input
-              {...register('password')}
-              type={showPassword ? 'text' : 'password'}
+              {...register("password")}
+              type={showPassword ? "text" : "password"}
               id="password"
               placeholder="••••••••"
               disabled={isLoading}
@@ -95,7 +87,7 @@ export function RegistrationForm() {
               size="sm"
               className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
               onClick={() => setShowPassword(!showPassword)}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? (
                 <EyeOffIcon className="h-4 w-4 text-muted-foreground" />
@@ -104,9 +96,7 @@ export function RegistrationForm() {
               )}
             </Button>
           </div>
-          {errors.password && (
-            <p className="text-sm text-destructive">{errors.password.message}</p>
-          )}
+          {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
         </div>
 
         <div className="space-y-2">
@@ -115,8 +105,8 @@ export function RegistrationForm() {
           </label>
           <div className="relative">
             <Input
-              {...register('confirmPassword')}
-              type={showConfirmPassword ? 'text' : 'password'}
+              {...register("confirmPassword")}
+              type={showConfirmPassword ? "text" : "password"}
               id="confirmPassword"
               placeholder="••••••••"
               disabled={isLoading}
@@ -127,7 +117,7 @@ export function RegistrationForm() {
               size="sm"
               className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+              aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
             >
               {showConfirmPassword ? (
                 <EyeOffIcon className="h-4 w-4 text-muted-foreground" />
@@ -136,21 +126,15 @@ export function RegistrationForm() {
               )}
             </Button>
           </div>
-          {errors.confirmPassword && (
-            <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
-          )}
+          {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>}
         </div>
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={isLoading}
-        >
-          {isLoading ? 'Creating account...' : 'Create account'}
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? "Creating account..." : "Create account"}
         </Button>
 
         <p className="text-center text-sm text-muted-foreground">
-          Already have an account?{' '}
+          Already have an account?{" "}
           <a href="/auth/login" className="text-primary hover:underline">
             Sign in
           </a>

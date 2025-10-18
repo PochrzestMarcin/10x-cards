@@ -1,7 +1,6 @@
-import { useEffect } from 'react';
-import { Button } from '../ui/button';
-import { useAuthStore } from '../../lib/stores/auth.store';
-import { toast } from 'sonner';
+import { Button } from "../ui/button";
+import { useAuthStore } from "../../lib/stores/auth.store";
+import { toast } from "sonner";
 
 interface UserMenuProps {
   isAuthenticated: boolean;
@@ -13,22 +12,22 @@ export function UserMenu({ isAuthenticated, userEmail }: UserMenuProps) {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
       if (!response.ok) {
-        throw new Error('Failed to sign out');
+        throw new Error("Failed to sign out");
       }
 
       setUser(null);
-      toast.success('Successfully signed out');
-      window.location.href = '/';
+      toast.success("Successfully signed out");
+      window.location.href = "/";
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to sign out');
+      toast.error(error instanceof Error ? error.message : "Failed to sign out");
     }
   };
 
@@ -47,11 +46,7 @@ export function UserMenu({ isAuthenticated, userEmail }: UserMenuProps) {
 
   return (
     <div className="flex items-center gap-4">
-      {userEmail && (
-        <span className="text-sm text-muted-foreground">
-          {userEmail}
-        </span>
-      )}
+      {userEmail && <span className="text-sm text-muted-foreground">{userEmail}</span>}
       <Button variant="ghost" onClick={handleLogout}>
         Sign out
       </Button>

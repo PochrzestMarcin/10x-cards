@@ -1,6 +1,6 @@
-import type { APIRoute } from 'astro';
-import { createSupabaseServerInstance } from '../../../db/supabase.client';
-import { registrationSchema } from '../../../lib/schemas/auth.schema';
+import type { APIRoute } from "astro";
+import { createSupabaseServerInstance } from "../../../db/supabase.client";
+import { registrationSchema } from "../../../lib/schemas/auth.schema";
 
 export const prerender = false;
 
@@ -27,7 +27,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         JSON.stringify({
           error: error.message,
         }),
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -37,7 +37,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         user: data.user,
         session: data.session,
       }),
-      { status: 200 },
+      { status: 200 }
     );
   } catch (error) {
     if (error instanceof Error) {
@@ -45,14 +45,14 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         JSON.stringify({
           error: error.message,
         }),
-        { status: 400 },
+        { status: 400 }
       );
     }
     return new Response(
       JSON.stringify({
-        error: 'An unexpected error occurred',
+        error: "An unexpected error occurred",
       }),
-      { status: 500 },
+      { status: 500 }
     );
   }
 };

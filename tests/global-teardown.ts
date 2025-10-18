@@ -1,7 +1,6 @@
-import type { FullConfig } from '@playwright/test';
-import { cleanupTestData } from './helpers/db.helper';
+import { cleanupTestData } from "./helpers/db.helper";
 
-async function globalTeardown(config: FullConfig) {
+async function globalTeardown() {
   await cleanupTestData();
 }
 

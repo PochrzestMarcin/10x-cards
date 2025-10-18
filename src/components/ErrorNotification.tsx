@@ -1,5 +1,5 @@
-import { Alert, AlertDescription } from './ui/alert';
-import { AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from "./ui/alert";
+import { AlertCircle } from "lucide-react";
 
 interface ErrorNotificationProps {
   message: string;

@@ -1,38 +1,29 @@
-import { useState } from 'react';
-import { useFlashcards } from '@/components/hooks/useFlashcards';
-import { useFlashcardModal } from '@/components/hooks/useFlashcardModal';
-import { FilterBar } from './FilterBar';
-import { FlashcardsTable } from './FlashcardsTable';
-import { FlashcardModal } from './FlashcardModal';
-import { DeleteConfirmationDialog } from './DeleteConfirmationDialog';
-import { Card } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
-import { toast } from 'sonner';
-import type { FlashcardViewModel, FlashcardUpdateDto } from '@/types';
+import { useState } from "react";
+import { useFlashcards } from "@/components/hooks/useFlashcards";
+import { useFlashcardModal } from "@/components/hooks/useFlashcardModal";
+import { FilterBar } from "./FilterBar";
+import { FlashcardsTable } from "./FlashcardsTable";
+import { FlashcardModal } from "./FlashcardModal";
+import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+import { toast } from "sonner";
+import type { FlashcardViewModel, FlashcardUpdateDto } from "@/types";
 
 export function FlashcardsView() {
-  const {
-    flashcards,
-    pagination,
-    isLoading,
-    error,
-    setPage,
-    setSort,
-    setSourceFilter,
-    refresh,
-  } = useFlashcards();
+  const { flashcards, pagination, isLoading, error, setPage, setSort, setSourceFilter, refresh } = useFlashcards();
 
   const [sortState, setSortState] = useState({
-    column: 'created_at',
-    order: 'desc' as 'asc' | 'desc'
+    column: "created_at",
+    order: "desc" as "asc" | "desc",
   });
 
   const handleSort = (column: string) => {
-    setSortState(prev => ({
+    setSortState((prev) => ({
       column,
-      order: prev.column === column && prev.order === 'asc' ? 'desc' : 'asc'
+      order: prev.column === column && prev.order === "asc" ? "desc" : "asc",
     }));
     setSort(column);
   };
@@ -40,38 +31,38 @@ export function FlashcardsView() {
   const handleSave = async (data: FlashcardUpdateDto) => {
     try {
       const isCreating = !modalState.flashcard?.id;
-      const url = isCreating ? '/api/flashcards' : `/api/flashcards/${modalState.flashcard?.id}`;
-      const method = isCreating ? 'POST' : 'PUT';
+      const url = isCreating ? "/api/flashcards" : `/api/flashcards/${modalState.flashcard?.id}`;
+      const method = isCreating ? "POST" : "PUT";
       const body = isCreating ? JSON.stringify({ flashcards: [data] }) : JSON.stringify(data);
-    
+
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: body,
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        
+
         // Handle specific error cases
         if (response.status === 404) {
-          throw new Error('Flashcard not found');
+          throw new Error("Flashcard not found");
         } else if (response.status === 400 && errorData.errors) {
-          throw new Error('Invalid flashcard data: ' + errorData.errors.map((e: any) => e.message).join(', '));
+          throw new Error("Invalid flashcard data");
         } else {
-          throw new Error(errorData.message || `Failed to ${isCreating ? 'create' : 'update'} flashcard`);
+          throw new Error(errorData.message || `Failed to ${isCreating ? "create" : "update"} flashcard`);
         }
       }
 
       const result = await response.json();
       const flashcard = isCreating ? result.flashcards[0] : result;
-      toast.success(`Flashcard ${isCreating ? 'created' : 'updated'} successfully`);
+      toast.success(`Flashcard ${isCreating ? "created" : "updated"} successfully`);
       refresh();
       return flashcard;
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to save flashcard');
+      toast.error(error instanceof Error ? error.message : "Failed to save flashcard");
       throw error; // Re-throw to be handled by the modal
     }
   };
@@ -107,20 +98,20 @@ export function FlashcardsView() {
 
     try {
       const response = await fetch(`/api/flashcards/${deleteDialogState.flashcard.id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to delete flashcard');
+        throw new Error(errorData.message || "Failed to delete flashcard");
       }
 
-      toast.success('Flashcard deleted successfully');
+      toast.success("Flashcard deleted successfully");
       refresh();
       closeDeleteDialog();
     } catch (error) {
-      console.error('Error deleting flashcard:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to delete flashcard');
+      console.error("Error deleting flashcard:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to delete flashcard");
     }
   };
 
@@ -130,9 +121,7 @@ export function FlashcardsView() {
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
-        <AlertDescription>
-          {error.message}
-        </AlertDescription>
+        <AlertDescription>{error.message}</AlertDescription>
       </Alert>
     );
   }
@@ -140,11 +129,8 @@ export function FlashcardsView() {
   return (
     <div data-test-id="flashcards-view" className="container mx-auto py-6 space-y-6">
       <Card className="p-4">
-        <FilterBar 
-          onSourceFilterChange={setSourceFilter}
-          onCreateClick={openCreate}
-        />
-        
+        <FilterBar onSourceFilterChange={setSourceFilter} onCreateClick={openCreate} />
+
         {isLoading ? (
           <div className="space-y-4">
             <Skeleton className="h-12 w-full" />

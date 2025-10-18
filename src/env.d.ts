@@ -1,11 +1,11 @@
 /// <reference types="astro/client" />
 
 interface Window {
-  __theme?: 'dark' | 'light';
+  __theme?: "dark" | "light";
 }
 
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from './db/database.types';
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "./db/database.types";
 
 declare global {
   namespace App {

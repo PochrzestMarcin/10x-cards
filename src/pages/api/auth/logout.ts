@@ -1,5 +1,5 @@
-import type { APIRoute } from 'astro';
-import { createSupabaseServerInstance } from '../../../db/supabase.client';
+import type { APIRoute } from "astro";
+import { createSupabaseServerInstance } from "../../../db/supabase.client";
 
 export const prerender = false;
 
@@ -9,24 +9,21 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     const { error } = await supabase.auth.signOut();
 
     if (error) {
-      return new Response(
-        JSON.stringify({ error: error.message }), 
-        { 
-          status: 400,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
+      return new Response(JSON.stringify({ error: error.message }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     return new Response(null, { status: 200 });
   } catch (error) {
     return new Response(
-      JSON.stringify({ 
-        error: error instanceof Error ? error.message : 'An unexpected error occurred' 
-      }), 
-      { 
+      JSON.stringify({
+        error: error instanceof Error ? error.message : "An unexpected error occurred",
+      }),
+      {
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" },
       }
     );
   }

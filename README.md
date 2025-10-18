@@ -64,22 +64,27 @@ To set up and run the project on your local machine, follow these steps.
 ### Installation
 
 1.  **Clone the repository:**
+
     ```sh
     git clone https://github.com/PochrzestMarcin/10x-cards.git
     cd 10x-cards
     ```
 
 2.  **Install dependencies:**
+
     ```sh
     npm install
     ```
 
 3.  **Set up environment variables:**
     Create a `.env` file in the root of the project by copying the example file:
+
     ```sh
     cp .env.example .env
     ```
+
     You will need to populate this file with your credentials for Supabase and OpenRouter.
+
     ```env
     # Supabase credentials
     PUBLIC_SUPABASE_URL="your-supabase-url"
@@ -115,22 +120,22 @@ The `package.json` file includes the following scripts for managing the project:
 
 ### Key Features (In Scope for MVP)
 
--   **AI-Powered Flashcard Generation**: Users can paste text (1,000-10,000 characters) to get AI-generated flashcard suggestions.
--   **Manual Flashcard Management**: Full CRUD (Create, Read, Update, Delete) functionality for flashcards.
--   **User Authentication**: Secure registration, login, and account management.
--   **Spaced Repetition System**: Integration with an open-source algorithm for effective learning sessions.
--   **Data Privacy**: GDPR-compliant handling of user data with options for data access and deletion.
--   **Usage Statistics**: Tracking the number of AI-generated vs. user-accepted flashcards.
+- **AI-Powered Flashcard Generation**: Users can paste text (1,000-10,000 characters) to get AI-generated flashcard suggestions.
+- **Manual Flashcard Management**: Full CRUD (Create, Read, Update, Delete) functionality for flashcards.
+- **User Authentication**: Secure registration, login, and account management.
+- **Spaced Repetition System**: Integration with an open-source algorithm for effective learning sessions.
+- **Data Privacy**: GDPR-compliant handling of user data with options for data access and deletion.
+- **Usage Statistics**: Tracking the number of AI-generated vs. user-accepted flashcards.
 
 ### Out of Scope (for MVP)
 
--   Advanced, custom-built spaced repetition algorithm.
--   Gamification features.
--   Native mobile applications (the initial focus is on the web).
--   Importing documents in formats like PDF or DOCX.
--   A public API for third-party integrations.
--   Features for sharing flashcards between users.
--   Advanced notification system.
+- Advanced, custom-built spaced repetition algorithm.
+- Gamification features.
+- Native mobile applications (the initial focus is on the web).
+- Importing documents in formats like PDF or DOCX.
+- A public API for third-party integrations.
+- Features for sharing flashcards between users.
+- Advanced notification system.
 
 ## Project Status
 

@@ -1,10 +1,10 @@
-import type { Database } from './db/database.types';
+import type { Database } from "./db/database.types";
 
 //Aliases for the database tables
-export type Flashcard = Database['public']['Tables']['flashcards']['Row'];
-export type FlashcardInsert = Database['public']['Tables']['flashcards']['Insert'];
-export type Generation = Database['public']['Tables']['generations']['Row'];
-export type GenerationErrorLog = Database['public']['Tables']['generation_error_logs']['Row'];
+export type Flashcard = Database["public"]["Tables"]["flashcards"]["Row"];
+export type FlashcardInsert = Database["public"]["Tables"]["flashcards"]["Insert"];
+export type Generation = Database["public"]["Tables"]["generations"]["Row"];
+export type GenerationErrorLog = Database["public"]["Tables"]["generation_error_logs"]["Row"];
 
 /* ------------------------------------------------------------
  * Shared helpers & enums
@@ -14,13 +14,13 @@ export type GenerationErrorLog = Database['public']['Tables']['generation_error_
  * Allowed sources for flashcards as defined by business rules.
  * Keep in sync with `flashcards.source` database enum (varchar in DB).
  */
-export type FlashcardSource = 'ai-full' | 'ai-edited' | 'manual'
+export type FlashcardSource = "ai-full" | "ai-edited" | "manual";
 
 /** Standard pagination metadata returned by list endpoints */
 export interface PaginationDto {
-  page: number
-  limit: number
-  total: number
+  page: number;
+  limit: number;
+  total: number;
 }
 
 /**
@@ -29,13 +29,13 @@ export interface PaginationDto {
  */
 export type FlashcardDTO = Pick<
   Flashcard,
-  'id' | 'front' | 'back' | 'source' | 'created_at' | 'updated_at' | 'generation_id'
+  "id" | "front" | "back" | "source" | "created_at" | "updated_at" | "generation_id"
 >;
 
 /** Paginated list response for flashcards */
 export interface PaginatedFlashcardsResponseDTO {
-  data: FlashcardDTO[]
-  pagination: PaginationDto
+  data: FlashcardDTO[];
+  pagination: PaginationDto;
 }
 
 //Flashcard create dto & command model
@@ -47,15 +47,15 @@ export interface FlashcardCreateDto {
 }
 
 export interface CreateFlashcardCommand {
-  flashcards: FlashcardCreateDto[]
+  flashcards: FlashcardCreateDto[];
 }
 
 //Flashcard update dto & command model
 export type FlashcardUpdateDto = Partial<{
-    front: string;
-    back: string;
-    source: FlashcardSource;
-    generation_id: number | null;
+  front: string;
+  back: string;
+  source: FlashcardSource;
+  generation_id: number | null;
 }>;
 
 /* ------------------------------------------------------------
@@ -65,7 +65,7 @@ export type FlashcardUpdateDto = Partial<{
 /** Command body for `POST /generations` */
 export interface GenerateFlashcardsCommand {
   /** User provided source text (1000–10000 chars) */
-  source_text: string
+  source_text: string;
 }
 
 /* ------------------------------------------------------------
@@ -90,13 +90,13 @@ export interface GenerationCreateResponseDto {
 
 export type GenerationDetailDto = Generation & {
   flashcards?: FlashcardDTO[];
-}
+};
 
 // Generation Error Log DTO
 
 export type GenerationErrorLogDto = Pick<
-GenerationErrorLog,
-"id" | "error_code" | "error_message" | "created_at" | "model" | "source_text_hash" | "source_text_length"
+  GenerationErrorLog,
+  "id" | "error_code" | "error_message" | "created_at" | "model" | "source_text_hash" | "source_text_length"
 >;
 
 /** Response type for POST /flashcards endpoint */
@@ -108,8 +108,8 @@ export interface CreateFlashcardsResponseDto {
 export interface FlashcardsListQuery {
   page?: number;
   limit?: number;
-  sort?: 'created_at' | 'source' | 'updated_at';
-  order?: 'asc' | 'desc';
+  sort?: "created_at" | "source" | "updated_at";
+  order?: "asc" | "desc";
   source?: FlashcardSource;
   generation_id?: number;
 }
@@ -131,6 +131,6 @@ export interface FlashcardViewModel extends FlashcardDTO {
 /** Modal state for flashcard editing/creation */
 export interface ModalState {
   isOpen: boolean;
-  mode: 'create' | 'edit';
+  mode: "create" | "edit";
   flashcard: FlashcardViewModel | null;
 }

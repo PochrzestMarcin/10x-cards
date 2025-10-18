@@ -1,20 +1,13 @@
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableCell,
-} from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { ArrowUpDown } from 'lucide-react';
-import { FlashcardRow } from './FlashcardRow';
-import type { FlashcardViewModel, PaginationDto } from '@/types';
+import { Table, TableBody, TableHeader, TableRow, TableCell } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { ArrowUpDown } from "lucide-react";
+import { FlashcardRow } from "./FlashcardRow";
+import type { FlashcardViewModel, PaginationDto } from "@/types";
 
 interface FlashcardsTableProps {
   flashcards: FlashcardViewModel[];
   pagination: PaginationDto;
-  sort: { column: string; order: 'asc' | 'desc' };
+  sort: { column: string; order: "asc" | "desc" };
   onSort: (column: string) => void;
   onPageChange: (page: number) => void;
   onEdit: (flashcard: FlashcardViewModel) => void;
@@ -24,7 +17,6 @@ interface FlashcardsTableProps {
 export function FlashcardsTable({
   flashcards,
   pagination,
-  sort,
   onSort,
   onPageChange,
   onEdit,
@@ -33,12 +25,7 @@ export function FlashcardsTable({
   const totalPages = Math.ceil(pagination.total / pagination.limit);
 
   const SortButton = ({ column }: { column: string }) => (
-    <Button
-      variant="ghost"
-      size="sm"
-      className="-ml-3"
-      onClick={() => onSort(column)}
-    >
+    <Button variant="ghost" size="sm" className="-ml-3" onClick={() => onSort(column)}>
       <ArrowUpDown className="h-4 w-4" />
     </Button>
   );
@@ -56,23 +43,18 @@ export function FlashcardsTable({
                 <SortButton column="source" />
               </div>
             </TableCell>
-            <TableCell className="w-[10%] whitespace-nowrap">              
-                <div className="flex items-center gap-2">
-                    <span>Created At</span>
-                    <SortButton column="created_at" />
-                </div>
+            <TableCell className="w-[10%] whitespace-nowrap">
+              <div className="flex items-center gap-2">
+                <span>Created At</span>
+                <SortButton column="created_at" />
+              </div>
             </TableCell>
             <TableCell className="w-[100px] text-center">Actions</TableCell>
           </TableRow>
         </TableHeader>
         <TableBody>
           {flashcards.map((flashcard) => (
-            <FlashcardRow
-              key={flashcard.id}
-              flashcard={flashcard}
-              onEdit={onEdit}
-              onDelete={onDelete}
-            />
+            <FlashcardRow key={flashcard.id} flashcard={flashcard} onEdit={onEdit} onDelete={onDelete} />
           ))}
           {flashcards.length === 0 && (
             <TableRow>

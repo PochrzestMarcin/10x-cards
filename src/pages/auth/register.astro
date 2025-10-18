@@ -1,7 +1,7 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import { RegistrationForm } from '../../components/auth/RegistrationForm';
-import { createSupabaseServerInstance } from '../../db/supabase.client';
+import Layout from "../../layouts/Layout.astro";
+import { RegistrationForm } from "../../components/auth/RegistrationForm";
+import { createSupabaseServerInstance } from "../../db/supabase.client";
 
 export const prerender = false;
 
@@ -10,11 +10,13 @@ const supabase = createSupabaseServerInstance({
   headers: Astro.request.headers,
 });
 
-const { data: { user } } = await supabase.auth.getUser();
+const {
+  data: { user },
+} = await supabase.auth.getUser();
 
 // If user is already authenticated, redirect to generate page
 if (user) {
-  return Astro.redirect('/generate');
+  return Astro.redirect("/generate");
 }
 ---
 

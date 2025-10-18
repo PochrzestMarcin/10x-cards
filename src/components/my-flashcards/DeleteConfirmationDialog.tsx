@@ -17,12 +17,7 @@ interface DeleteConfirmationDialogProps {
   onCancel: () => void;
 }
 
-export function DeleteConfirmationDialog({
-  isOpen,
-  flashcard,
-  onConfirm,
-  onCancel,
-}: DeleteConfirmationDialogProps) {
+export function DeleteConfirmationDialog({ isOpen, onConfirm, onCancel }: DeleteConfirmationDialogProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={(open) => !open && onCancel()}>
       <AlertDialogContent>

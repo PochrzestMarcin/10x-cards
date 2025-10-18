@@ -11,17 +11,19 @@ The view should be accessible under the path `/generate`.
 ## 3. Component structure
 
 **FlashcardGenerationView** - the main component of the view containing the logic and structure of the page.
- - **TextInputArea** - text input field component for pasting text.
- - **GenerateButton** - button initiating the flashcard generation process.
- - **FlashcardList** - list displaying flashcard suggestions received from the API.
-  - **FlashcardListItem** - a single list item representing one flashcard suggestion.
- - **SkeletonLoader** - loading indicator component (skeleton), displayed while waiting for the API response.
- - **BulkSaveButton** - buttons for saving all flashcards or only accepted ones.
- - **ErrorNotification** - a component for displaying error messages.
+
+- **TextInputArea** - text input field component for pasting text.
+- **GenerateButton** - button initiating the flashcard generation process.
+- **FlashcardList** - list displaying flashcard suggestions received from the API.
+- **FlashcardListItem** - a single list item representing one flashcard suggestion.
+- **SkeletonLoader** - loading indicator component (skeleton), displayed while waiting for the API response.
+- **BulkSaveButton** - buttons for saving all flashcards or only accepted ones.
+- **ErrorNotification** - a component for displaying error messages.
 
 ## 4. Component Details
 
 ### `FlashcardGenerationView`
+
 - **Description**: Main view, which integrates all component required for flashcards generation and review.
 - **Elements**: Text field, generate button, list of flashcards, loader and error messages
 - **Handled Events**: Value change in text field, generate button click, interactions with flashcards (acceptance, edit, reject), save button click
@@ -30,6 +32,7 @@ The view should be accessible under the path `/generate`.
 - **Propsy**: Can get optional functions of callback to confirm saving or rerouting after saving.
 
 ### `TextInputArea`
+
 - **Description**: Component that allows user to input text.
 - **Elements**: Text area with placeholder and label.
 - **Handled Events**: onChange to update text value state
@@ -38,6 +41,7 @@ The view should be accessible under the path `/generate`.
 - **Propsy**: value, onChange, placeholder
 
 ### `GenerateButton`
+
 - **Description**: Button which starts the flashcards generation process
 - **Elements**: HTML button with label "Generate flashcards".
 - **Handled Events**: onClick, which triggers function calling the api request
@@ -46,6 +50,7 @@ The view should be accessible under the path `/generate`.
 - **Propsy**: onClick, disabled (depending upon validation status)
 
 ### `FlashcardList`
+
 - **Description**: Component which shows the list of flashcards proposals retrieved from API.
 - **Elements**: List (ie. ul/li or grid components) containing FlashcardListItem
 - **Handled Events**: Passing events to particular flashcard items (accept, edit, reject)
@@ -54,14 +59,16 @@ The view should be accessible under the path `/generate`.
 - **Propsy**: flashcards (list of proposals), onAccept, onEdit, onReject
 
 ### `FlashcardListItem`
+
 - **Description**: Single flashcard showing one proposal of a flashcard.
-- **Elements**: Text for `front` and `back` and three buttons: "Approve", "Edit", "Reject" 
+- **Elements**: Text for `front` and `back` and three buttons: "Approve", "Edit", "Reject"
 - **Handled Events**: onClick for each button, which modifies the state of given flashcard (ie. mark as approved, opening edit mode, removal from list)
 - **Validation Rules**: If edit is active, the entered data must fulfill conditions: `front` length <= 200 characters, `back` length <= 500 characters.
 - **Types**: `FlashcardProposalViewModel`, extended local type with flag accepted/edited.
 - **Propsy**: flashcard (proposal data), onAccept, onEdit, onReject
 
 ### `SkeletonLoader`
+
 - **Description**: Komponent that visualises data loading (skeleton)
 - **Elements**: UI Template (skeleton) imitating cards structure, which will be presented.
 - **Handled Events**: No user interactions
@@ -70,6 +77,7 @@ The view should be accessible under the path `/generate`.
 - **Propsy**: Can accept optional styling parameters.
 
 ### `ErrorNotification`
+
 - **Description**: Komponent that visualises error messages (ie. API errors of form validation messages)
 - **Elements**: Text message with error icon.
 - **Handled Events**: None - pure information component
@@ -78,6 +86,7 @@ The view should be accessible under the path `/generate`.
 - **Propsy**: message, optional error type
 
 ### `BulkSaveButton`
+
 - **Description**: A component allowing to save all generated flashcards to the database or only those ones that were accepted. It allows to send data to backend API in one request.
 - **Elements**: Contains "Save All" and "Save Accepted" buttons.
 - **Handled Events**: `onClick` for each button, which will trigger a callback function to save the appropriate flashcards.
@@ -97,19 +106,23 @@ The view should be accessible under the path `/generate`.
   { front: string, back: string, source: "ai-full" | "ai-edited" , accepted: boolean, edited: boolean }. It allows to define the source state that will be sent to the API `/flashcards` endpoint.
 
 ## 6. State Management
+
 View state will be managed by React hooks (useState, useEffect). Key states:
+
 - Text field value (textValue).
 - Loading status (isLoading) for API calls.
 - Error status (errorMessage) for error messages.
 - List of flashcard suggestions, along with their local flags (e.g. accepted,
-edited).
+  edited).
 - Optional status for flashcard editing mode.
-It is possible to create a custom hook (e.g. useGenerateFlashcards) to handle ΑΡΙ logic.
+  It is possible to create a custom hook (e.g. useGenerateFlashcards) to handle ΑΡΙ logic.
 
 ## 7. API integration
+
 Integration with endpoint:
+
 - **POST /generations**: We send the { source_text } object and receive a response
-containing generation_id, flashcards_proposals and generated_count.
+  containing generation_id, flashcards_proposals and generated_count.
 - Response validation: check HTTP status, handle 400 (validation) and 500 (server error) errors.
 - After accepting the proposal, we call POST /flashcards to save the flashcards, passing a properly formatted array of objects (with additional validations front ≤200, back ≤500, source, generation_id according to types).
 
@@ -121,30 +134,35 @@ containing generation_id, flashcards_proposals and generated_count.
 - **Error Handling**: The application should handle potential 400 (validation) and 500 (server) errors and display an appropriate message to the user.
 
 ## 8. User interactions
+
 The user pastes text into the text field.
+
 - After clicking the ‘Generate flashcards’ button:
- - Text length validation begins.
- - If the validation is successful, a request is sent to the API.
- - While waiting, SkeletonLoader is displayed and the button is deactivated.
+- Text length validation begins.
+- If the validation is successful, a request is sent to the API.
+- While waiting, SkeletonLoader is displayed and the button is deactivated.
 - After receiving a response, the FlashcardListItem list is displayed.
 - Each card allows you to:
- - Approve the suggestion, which marks the flashcard for saving.
- - Editing by opening the edit mode with the option to correct the text with validation.
- - Rejecting by removing the suggestion from the list.
+- Approve the suggestion, which marks the flashcard for saving.
+- Editing by opening the edit mode with the option to correct the text with validation.
+- Rejecting by removing the suggestion from the list.
 - The BulkSaveButton component allows you to send selected flashcards to be saved in the database (API POST /flashcards call).
 
 ## 9. Conditions and validation
-- Text field: the text must be between 1,000 and 10,000 characters long. 
+
+- Text field: the text must be between 1,000 and 10,000 characters long.
 - When editing a flashcard: front 200 characters, back ≤ 500 characters.
-- The generate button is only activated when the text has been correctly validated. 
+- The generate button is only activated when the text has been correctly validated.
 - API response validation: error messages displayed in ErrorNotification.
 
 ## 10. Error handling
+
 - Displaying error messages in case of form validation failure.
 - API error handling (status 400 and 500): displaying appropriate messages and allowing the request to be resubmitted.
 - If saving flashcards fails, the loading status is reset and the user is informed of the error.
 
 ## 11. Implementation steps
+
 1. Create a new `/generate` view page in the Astro structure.
 2. Implement the main `FlashcardGenerationView` component.
 3. Create a `TextInputArea` component with text length validation.
