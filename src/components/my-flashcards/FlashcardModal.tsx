@@ -59,9 +59,10 @@ export function FlashcardModal({ isOpen, mode, flashcard, onSave, onClose }: Fla
         <DialogHeader>
           <DialogTitle>{mode === 'create' ? 'Create Flashcard' : 'Edit Flashcard'}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form data-test-id="flashcard-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Input
+              data-test-id="flashcard-front-input"
               {...register('front')}
               placeholder="Front side"
               className={errors.front ? 'border-red-500' : ''}
@@ -72,6 +73,7 @@ export function FlashcardModal({ isOpen, mode, flashcard, onSave, onClose }: Fla
           </div>
           <div className="space-y-2">
             <Textarea
+              data-test-id="flashcard-back-input"
               {...register('back')}
               placeholder="Back side"
               className={errors.back ? 'border-red-500' : ''}
@@ -84,7 +86,7 @@ export function FlashcardModal({ isOpen, mode, flashcard, onSave, onClose }: Fla
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button data-test-id="save-flashcard-button" type="submit" disabled={isSubmitting}>
               {isSubmitting ? 'Saving...' : 'Save'}
             </Button>
           </div>

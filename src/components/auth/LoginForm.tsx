@@ -68,6 +68,7 @@ export function LoginForm() {
             id="email"
             placeholder="you@example.com"
             disabled={isLoading}
+            data-test-id="auth-input-email"
           />
           {errors.email && (
             <p className="text-sm text-destructive">{errors.email.message}</p>
@@ -84,6 +85,7 @@ export function LoginForm() {
             id="password"
             placeholder="••••••••"
             disabled={isLoading}
+            data-test-id="auth-input-password"
           />
           {errors.password && (
             <p className="text-sm text-destructive">{errors.password.message}</p>
@@ -113,6 +115,7 @@ export function LoginForm() {
           type="submit"
           className="w-full"
           disabled={isLoading}
+          data-test-id="sign-in-button"
         >
           {isLoading ? 'Signing in...' : 'Sign in'}
         </Button>
