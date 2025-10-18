@@ -30,6 +30,10 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
+    {
+      name: 'cleanup',
+      testMatch: '/.tests/global-teardown.ts/'
+    }
   ],
   webServer: {
     command: 'npm run dev',
