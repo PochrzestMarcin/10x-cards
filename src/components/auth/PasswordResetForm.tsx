@@ -22,7 +22,7 @@ export function PasswordResetForm() {
     },
   });
 
-  const onSubmit = async (data: PasswordResetFormData) => {
+  const onSubmit = async () => {
     setIsLoading(true);
     // Note: Password reset logic will be implemented in next steps
     toast.error("Password reset not implemented yet");

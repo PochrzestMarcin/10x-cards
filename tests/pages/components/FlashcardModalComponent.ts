@@ -1,4 +1,3 @@
-import type { Page } from "@playwright/test";
 import { BasePage } from "../BasePage";
 
 export interface FlashcardData {
@@ -7,10 +6,6 @@ export interface FlashcardData {
 }
 
 export class FlashcardModalComponent extends BasePage {
-  constructor(page: Page) {
-    super(page);
-  }
-
   // Locators
   private get form() {
     return this.page.locator('[data-test-id="flashcard-form"]');

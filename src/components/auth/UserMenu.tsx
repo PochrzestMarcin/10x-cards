@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Button } from "../ui/button";
 import { useAuthStore } from "../../lib/stores/auth.store";
 import { toast } from "sonner";

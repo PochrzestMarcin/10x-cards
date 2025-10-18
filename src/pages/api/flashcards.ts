@@ -1,8 +1,7 @@
 import type { APIRoute } from "astro";
-import { FlashcardService } from "../../lib/services/flashcard.service";
-import type { CreateFlashcardsResponseDto, DeleteFlashcardResponseDto } from "../../types";
+import { listFlashcards, createFlashcards } from "../../lib/services/flashcard.service";
+import type { CreateFlashcardsResponseDto } from "../../types";
 import { ZodError } from "zod";
-import { flashcardsListQuerySchema, flashcardUpdateSchema } from "../../lib/schemas/flashcard.schema";
 
 export const prerender = false;
 
@@ -22,7 +21,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
     const url = new URL(request.url);
     const queryParams = Object.fromEntries(url.searchParams);
     // Get paginated flashcards via service
-    const response = await FlashcardService.listFlashcards(queryParams, user.id, supabase);
+    const response = await listFlashcards(queryParams, user.id, supabase);
 
     return new Response(JSON.stringify(response), {
       status: 200,
@@ -76,6 +75,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     try {
       body = await request.json();
     } catch (e) {
+      console.error(e);
       return new Response(JSON.stringify({ message: "Invalid JSON" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
@@ -83,7 +83,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // Create flashcards via service
-    const flashcards = await FlashcardService.createFlashcards(body, userId, supabase);
+    const flashcards = await createFlashcards(body, userId, supabase);
 
     // Return success response
     const response: CreateFlashcardsResponseDto = { flashcards };

@@ -85,6 +85,7 @@ export class OpenRouterService {
       JSON.stringify(schema);
       this.currentResponseFormat = schema;
     } catch (error) {
+      console.error(error);
       throw new OpenRouterError("Invalid response format schema", "INVALID_RESPONSE_FORMAT_SCHEMA");
     }
   }

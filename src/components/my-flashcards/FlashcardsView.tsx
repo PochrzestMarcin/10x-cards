@@ -50,7 +50,7 @@ export function FlashcardsView() {
         if (response.status === 404) {
           throw new Error("Flashcard not found");
         } else if (response.status === 400 && errorData.errors) {
-          throw new Error("Invalid flashcard data: " + errorData.errors.map((e: any) => e.message).join(", "));
+          throw new Error("Invalid flashcard data");
         } else {
           throw new Error(errorData.message || `Failed to ${isCreating ? "create" : "update"} flashcard`);
         }

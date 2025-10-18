@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { FlashcardService } from "../../../lib/services/flashcard.service";
+import { updateFlashcard, deleteFlashcard } from "../../../lib/services/flashcard.service";
 import { flashcardUpdateSchema } from "../../../lib/schemas/flashcard.schema";
 import { ZodError } from "zod";
 
@@ -29,6 +29,7 @@ export const PUT: APIRoute = async ({ request, locals, params }) => {
     try {
       body = await request.json();
     } catch (e) {
+      console.error(e);
       return new Response(JSON.stringify({ message: "Invalid JSON" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
@@ -39,7 +40,7 @@ export const PUT: APIRoute = async ({ request, locals, params }) => {
     const validatedData = flashcardUpdateSchema.parse(body);
 
     // Update flashcard via service
-    const updatedFlashcard = await FlashcardService.updateFlashcard(id, validatedData, user.id, supabase);
+    const updatedFlashcard = await updateFlashcard(id, validatedData, user.id, supabase);
 
     return new Response(JSON.stringify(updatedFlashcard), {
       status: 200,
@@ -104,7 +105,7 @@ export const DELETE: APIRoute = async ({ locals, params }) => {
     }
 
     // Delete flashcard via service
-    await FlashcardService.deleteFlashcard(id, user.id, supabase);
+    await deleteFlashcard(id, user.id, supabase);
 
     return new Response(
       JSON.stringify({

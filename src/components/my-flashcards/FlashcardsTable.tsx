@@ -1,4 +1,4 @@
-import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from "@/components/ui/table";
+import { Table, TableBody, TableHeader, TableRow, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { FlashcardRow } from "./FlashcardRow";
@@ -17,7 +17,6 @@ interface FlashcardsTableProps {
 export function FlashcardsTable({
   flashcards,
   pagination,
-  sort,
   onSort,
   onPageChange,
   onEdit,

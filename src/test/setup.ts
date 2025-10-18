@@ -5,9 +5,15 @@ import { server } from "./mocks/server";
 
 // Mock ResizeObserver
 class ResizeObserverMock {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+  observe() {
+    // Mock implementation
+  }
+  unobserve() {
+    // Mock implementation
+  }
+  disconnect() {
+    // Mock implementation
+  }
 }
 
 // Mock window.ResizeObserver

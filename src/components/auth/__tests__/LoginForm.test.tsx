@@ -1,11 +1,7 @@
-import { screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { LoginForm } from "../LoginForm";
 import { render } from "../../../test/test-utils";
-import { useAuthStore } from "../../../lib/stores/auth.store";
-import { toast } from "sonner";
-import { loginSchema } from "../../../lib/schemas/auth.schema";
 
 // Mock Sonner toast
 vi.mock("sonner", () => ({

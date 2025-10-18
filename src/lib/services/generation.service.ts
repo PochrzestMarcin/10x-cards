@@ -92,6 +92,7 @@ Example:
       try {
         parsedContent = JSON.parse(content);
       } catch (e) {
+        console.error(e);
         throw new Error("Invalid JSON response from OpenRouter");
       }
 
@@ -140,8 +141,8 @@ Example:
       errorMessage = error.message;
 
       // Handle OpenRouter specific errors
-      if ("code" in error && typeof (error as any).code === "string") {
-        errorCode = (error as any).code;
+      if ("code" in error && typeof error.code === "string") {
+        errorCode = error.code as string;
       }
     }
 

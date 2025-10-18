@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/consistent-type-definitions */
+/* eslint-disable @typescript-eslint/consistent-indexed-object-style */
+
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {

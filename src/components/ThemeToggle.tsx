@@ -3,7 +3,6 @@ import { Switch } from "@/components/ui/switch";
 import { Moon, Sun } from "lucide-react";
 
 // Utility functions for theme management
-const getSystemTheme = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
 const getStoredTheme = () => localStorage.getItem("theme");
 const setStoredTheme = (theme: "dark" | "light") => localStorage.setItem("theme", theme);
 

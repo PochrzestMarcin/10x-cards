@@ -23,7 +23,7 @@ export function NewPasswordForm() {
     },
   });
 
-  const onSubmit = async (data: NewPasswordFormData) => {
+  const onSubmit = async () => {
     setIsLoading(true);
     // Note: Password update logic will be implemented in next steps
     toast.error("Password update not implemented yet");
