@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { GenerateFlashcardsCommandSchema } from "../../lib/schemas/generation.schema";
 import { GenerationService } from "../../lib/services/generation.service";
+import { OPENROUTER_API_KEY } from "astro:env/server";
 
 export const prerender = false;
 
@@ -34,10 +35,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
         }
       );
     }
-
-    const apiKey = import.meta.env.OPENROUTER_API_KEY;
+    
     // Generate flashcards
-    const generationService = new GenerationService(supabase, apiKey);
+    const generationService = new GenerationService(supabase, OPENROUTER_API_KEY);
     const response = await generationService.generateFlashcards(result.data.source_text, userId);
 
     return new Response(JSON.stringify(response), {
