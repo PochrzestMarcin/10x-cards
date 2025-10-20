@@ -28,4 +28,4 @@ Testing - kompleksowe rozwiązania do testowania aplikacji:
 CI/CD i Hosting:
 
 - GitHub Actions do tworzenia pipeline'ów CI/CD
-- DigitalOcean do hostowania aplikacji za pośrednictwem obrazu docker
+- Cloudflare Pages jako hosting aplikacji Astro
