@@ -14,7 +14,7 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  adapter: cloudflare(),  
+  adapter: cloudflare(),
   devToolbar: {
     enabled: false,
   },

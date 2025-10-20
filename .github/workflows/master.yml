@@ -43,7 +43,7 @@ jobs:
 
       - name: Run unit tests with coverage
         run: npm run test
-  
+
   deploy:
     name: Deploy to Cloudflare Pages
     needs: [lint, unit-test]
