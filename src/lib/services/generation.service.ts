@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "../../db/supabase.client";
 import type { GenerationCreateResponseDto, FlashcardProposalDto } from "../../types";
-import { createHash } from "crypto";
 import { OpenRouterService } from "./openrouter.service";
+import { computeHashHex } from "../hash";
 
 export class GenerationService {
   private readonly openRouter: OpenRouterService;
@@ -76,8 +76,8 @@ Example:
     const startTime = Date.now();
 
     try {
-      // Hash the source text for storage
-      const sourceTextHash = createHash("md5").update(sourceText).digest("hex");
+      // Hash the source text for storage (cross-runtime compatible)
+      const sourceTextHash = await computeHashHex(sourceText, "SHA-256");
 
       // Generate flashcards using OpenRouter
       const response = await this.openRouter.sendChatMessage(sourceText);
@@ -146,7 +146,7 @@ Example:
       }
     }
 
-    const sourceTextHash = createHash("md5").update(sourceText).digest("hex");
+    const sourceTextHash = await computeHashHex(sourceText, "SHA-256");
 
     await this.supabase.from("generation_error_logs").insert({
       user_id: userId,

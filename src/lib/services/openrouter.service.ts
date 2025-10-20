@@ -153,6 +153,9 @@ export class OpenRouterService {
 
     for (let attempt = 0; attempt < this.maxRetries; attempt++) {
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+
         const response = await fetch(`${this.apiUrl}/chat/completions`, {
           method: "POST",
           headers: {
@@ -160,8 +163,10 @@ export class OpenRouterService {
             Authorization: `Bearer ${this.apiKey}`,
           },
           body: JSON.stringify(requestPayload),
-          signal: AbortSignal.timeout(this.timeout),
+          signal: controller.signal,
         });
+
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
